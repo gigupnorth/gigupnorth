@@ -20,8 +20,18 @@ let gigs = [];
   let scrollAttached = false; // ensures only one scroll listener
 
 async function loadGigs() {
-  const res = await fetch("https://script.google.com/macros/s/AKfycbwaDyoisj0rkvcfj8OyQCmgYT5jhiiuerQ2dBhb9ocUCQhAHvzk5UeLD1LJ9OOC4SVINg/exec");
-  let all = await res.json();
+  let res = await fetch("https://script.google.com/macros/s/AKfycbwQai3AEldoeZlXj6PNjqWauaJn2vShdPDMcR3DeDz1DyEDh_tOJ7o152QHrvxF4oA4rw/exec");
+
+  // If Google Apps Script is waking up, retry once after 1 second
+  if (!res.ok) {
+    await new Promise(r => setTimeout(r, 1000));
+    res = await fetch("https://script.google.com/macros/s/AKfycbwQai3AEldoeZlXj6PNjqWauaJn2vShdPDMcR3DeDz1DyEDh_tOJ7o152QHrvxF4oA4rw/exec");
+  }
+
+  const all = await res.json();
+  // ...rest of your code...
+}
+
 
   const today = new Date();
   today.setHours(0,0,0,0);
