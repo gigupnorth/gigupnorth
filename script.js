@@ -2,7 +2,7 @@
 const venueImages = {
   "The Globe": "images/globe.webp",
   "Trillians": "images/trillians.jpg",
-  "NE Volume Bar": "images/nevolume.jpg"
+  "NE Volume Bar": "images/nevolume.jpg",
   "Cobalt Studios": "images/cobalt.jpg"
 };
 
