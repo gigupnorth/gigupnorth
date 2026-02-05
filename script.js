@@ -89,16 +89,19 @@ async function loadGigs() {
   /* ---------------------------------------------
      LAZY RENDER: SCROLL TRIGGER
   --------------------------------------------- */
-  function handleLazyScroll() {
-    if (!lazyActive) return;
+ function handleLazyScroll() {
+  if (!lazyActive) return;
 
-    const scrollPos = window.innerHeight + window.scrollY;
-    const threshold = document.body.osetHeight - 800;
+  const doc = document.documentElement;
 
-    if (scrollPos > threshold) {
-      renderNextChunk();
-    }
+  const scrollPos = doc.scrollTop + window.innerHeight;
+  const threshold = doc.scrollHeight - 1000; // earlier trigger
+
+  if (scrollPos >= threshold) {
+    renderNextChunk();
   }
+}
+
 
   /* ---------------------------------------------
      CARD BUILDER (unchanged except extracted)
