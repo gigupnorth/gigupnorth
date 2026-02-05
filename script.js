@@ -101,14 +101,16 @@ async function loadGigs() {
   /* ---------------------------------------------
      CARD BUILDER (unchanged except extracted)
   --------------------------------------------- */
-  function buildCard(g) {
-    const img = venueImages[g.venue] || "";
-const card = document.createElement("article");
-    card.className = `gig-card ${
-      g.venue && g.venue.toLowerCase().includes("trillians")
-        ? "trillians"
-        : ""
-    }`;
+ function buildCard(g) {
+  const card = document.createElement("article");
+  card.className = `gig-card ${
+    g.venue && g.venue.toLowerCase().includes("trillians")
+      ? "trillians"
+      : ""
+  }`;
+
+  const img = "images/the-globe.jpg"; // TEMP: force this image for all cards
+
 
     const colour = (g.colour || "black").toString().trim().toLowerCase();
     card.dataset.colour = colour;
