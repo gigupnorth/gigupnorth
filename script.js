@@ -1,6 +1,6 @@
 // Venue images lookup table
 const venueImages = {
-  "The Globe": "images/globe.webp.",
+  "The Globe": "images/globe.webp",
   "Trillians": "images/trillians.jpg"
 };
 
