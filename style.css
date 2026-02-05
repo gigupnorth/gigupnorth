@@ -162,19 +162,7 @@ header h1 {
   overflow: hidden;
 }
 
-.gig-card.trillians::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 80%;
-  transform: translate(-50%, -50%);
-  background-image: url("https://trilliansnewcastle.co.uk/wp-content/uploads/2018/01/logo-e1515753136431-300x127.jpg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  opacity: 0.15;
-  pointer-events: none;
-}
+
 
 .gig-extra.hidden {
   display: none;
