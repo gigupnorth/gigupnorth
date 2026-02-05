@@ -101,15 +101,18 @@ async function loadGigs() {
   /* ---------------------------------------------
      CARD BUILDER (unchanged except extracted)
   --------------------------------------------- */
- function buildCard(g) {
+ ffunction buildCard(g) {
   console.log("VENUE:", g.venue);
-const img = venueImages[g.venue] || "";
-const card = document.createElement("article");
+
+  const img = venueImages[g.venue] || "";
+
+  const card = document.createElement("article");
   card.className = `gig-card ${
     g.venue && g.venue.toLowerCase().includes("trillians")
       ? "trillians"
       : ""
   }`;
+
 
 
 
