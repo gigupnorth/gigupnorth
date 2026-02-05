@@ -31,9 +31,9 @@ async function loadGigs() {
     res = await fetch(url);
   }
 
-  // Parse JSON
-  const all = await res.json();
 
+  const all = await res.json();
+gigs = all;
   // Continue with your existing logic
   lazyList = all;
   renderIndex = 0;
