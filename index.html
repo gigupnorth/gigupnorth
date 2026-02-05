@@ -1,20 +1,62 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Gig Up North</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- Load your external stylesheet -->
+  <link rel="stylesheet" href="style.css?v=1">
 </head>
+
 <body>
 
+  <!-- ⭐ STICKY BAR: TITLE + AREA BUTTONS + CARDS/TEXT -->
+  <div id="top-bar">
+    <header>
+      <h1>Gig Up North</h1>
 
-  <div class="area-key"></div>
+      <div class="area-key">
+        <span class="key darlo" data-area="Darlo">
+          Darlo
+          <small>(showing)</small>
+        </span>
 
-  <div id="cards-view"></div>
-  <div id="text-view" style="display:none;"></div>
+        <span class="key durham" data-area="Durham">
+          Durham
+          <small>(showing)</small>
+        </span>
 
-  <script src="script.js"></script>
+        <span class="key boro" data-area="Middlesbrough">
+          Middlesbrough
+          <small>(showing)</small>
+        </span>
 
+        <span class="key newcastle" data-area="Newcastle">
+          Newcastle
+          <small>(showing)</small>
+        </span>
+
+        <span class="key sunderland" data-area="Sunderland">
+          Sunderland
+          <small>(showing)</small>
+        </span>
+      </div>
+
+      <div class="view-toggle">
+        <button class="toggle-cards active" onclick="showCards()">CARDS view</button>
+        <button class="toggle-text" onclick="showText()">TEXT view</button>
+      </div>
+    </header>
+  </div>
+
+  <!-- ⭐ ONLY THE CONTENT BELOW SCROLLS -->
+  <main>
+    <section id="cards-view"></section>
+    <section id="text-view"></section>
+  </main>
+
+  <!-- Load your external script -->
+  <script src="script.js?v=1"></script>
 
 </body>
 </html>
