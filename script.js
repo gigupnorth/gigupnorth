@@ -13,10 +13,6 @@ let gigs = [];
   const CHUNK_SIZE = 40;      // tweak this if needed
   let lazyActive = false;     // prevents double-triggering
   let scrollAttached = false; // ensures only one scroll listener
-// One‑venue test
-const venueImages = {
-  "The Globe": "C:\Users\Barney Rubble\Desktop\band pics\IMG_0468.JPG"   // change to your actual file path
-};
 
 async function loadGigs() {
   const res = await fetch("https://script.google.com/macros/s/AKfycbxih_kGm7aUQ2j6DfR5_tuYO12Khr6mbDbWmwAjMeJ4r5czcGlS4NSKm__mhKxWdFW3Xw/exec?json=1");
