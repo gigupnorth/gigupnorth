@@ -157,10 +157,7 @@ header h1 {
 .gig-card[data-colour="black"]  { background: #8C8C8C; }
 .gig-card[data-colour="orange"] { background: #C47A5A; }
 
-.gig-card.trillians {
-  position: relative;
-  overflow: hidden;
-}
+
 
 
 
