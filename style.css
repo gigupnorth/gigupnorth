@@ -179,6 +179,32 @@ header h1 {
 .gig-extra.hidden {
   display: none;
 }
+/* --------------------------------------------------
+   FULL-CARD BACKGROUND IMAGE + DARK OVERLAY
+-------------------------------------------------- */
+
+.gig-card {
+  position: relative;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Dark overlay to improve text readability */
+.gig-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55); /* adjust darkness here */
+  z-index: 1;
+}
+
+/* Ensure all card content sits above the overlay */
+.gig-card > * {
+  position: relative;
+  z-index: 2;
+}
 
 .more-btn {
   margin-top: 0.6rem;
