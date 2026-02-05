@@ -89,18 +89,17 @@ async function loadGigs() {
   /* ---------------------------------------------
      LAZY RENDER: SCROLL TRIGGER
   --------------------------------------------- */
- function handleLazyScroll() {
+function handleLazyScroll() {
   if (!lazyActive) return;
 
-  const doc = document.documentElement;
+  const scrollPos = window.innerHeight + window.scrollY;
+  const threshold = document.body.offsetHeight - 800;
 
-  const scrollPos = doc.scrollTop + window.innerHeight;
-  const threshold = doc.scrollHeight - 1000; // earlier trigger
-
-  if (scrollPos >= threshold) {
+  if (scrollPos > threshold) {
     renderNextChunk();
   }
 }
+
 
 
   /* ---------------------------------------------
