@@ -1,11 +1,11 @@
 // Venue images lookup table
-/const venueImages = {
-  "The Globe": "images/globe.jpg",
-  "Trillians": "images/trillians.jpg",
-  "NE Volume Bar": "images/nevolume.jpg",
-  "Cobalt Studios": "images/cobalt.jpg"
+const venueImages = {
+  "The Globe": "https://gigupnorth.github.io/gigupnorth/images/globe.jpg",
+  "Trillians": "https://gigupnorth.github.io/gigupnorth/images/trillians.jpg",
+  "NE Volume Bar": "https://gigupnorth.github.io/gigupnorth/images/nevolume.jpg",
+  "Cobalt Studios": "https://gigupnorth.github.io/gigupnorth/images/cobalt.jpg"
 };
-/
+
 
 let gigs = [];
   const hiddenAreas = new Set();
