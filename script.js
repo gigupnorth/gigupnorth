@@ -20,7 +20,7 @@ let gigs = [];
   let scrollAttached = false; // ensures only one scroll listener
 
 async function loadGigs() {
-  const res = await fetch("https://script.google.com/macros/s/AKfycbxUuIGjdO1Q5wWMWCJ8wBVyb2KBn7WxXcTwjmOgkA7MFYKbwXihkr1XHDuO5JyYbewTIQ/exec");
+  const res = await fetch("https://script.google.com/macros/s/AKfycbwaDyoisj0rkvcfj8OyQCmgYT5jhiiuerQ2dBhb9ocUCQhAHvzk5UeLD1LJ9OOC4SVINg/exec");
   let all = await res.json();
 
   const today = new Date();
