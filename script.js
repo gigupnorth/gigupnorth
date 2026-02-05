@@ -45,22 +45,7 @@ async function loadGigs() {
 
 
 
-  const today = new Date();
-  today.setHours(0,0,0,0);
-
-  // ⭐ FILTER using human-readable date
-  gigs = all.filter(g => {
-    if (!g.date) return false;
-    const gigDate = parseGigDate(g.date);
-    return gigDate >= today;
-  });
-
-  startLazyRender(gigs);
-  renderText();
-  if (typeof buildVenueMenu === "function") {
-    buildVenueMenu();
-  }
-}
+  
 
 
 
