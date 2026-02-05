@@ -102,7 +102,8 @@ async function loadGigs() {
      CARD BUILDER (unchanged except extracted)
   --------------------------------------------- */
  function buildCard(g) {
-  const card = document.createElement("article");
+  console.log("VENUE:", g.venue);
+const card = document.createElement("article");
   card.className = `gig-card ${
     g.venue && g.venue.toLowerCase().includes("trillians")
       ? "trillians"
