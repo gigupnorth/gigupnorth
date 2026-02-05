@@ -35,12 +35,25 @@ async function loadGigs() {
   const all = await res.json();
 gigs = all;
   // Continue with your existing logic
-  lazyList = all;
-  renderIndex = 0;
-  lazyActive = false;
+  // Filter out past gigs
+const today = new Date();
+today.setHours(0,0,0,0);
 
-  // Kick off the first render
-  renderNextChunk();
+gigs = all.filter(g => {
+  if (!g.date) return false;
+  const gigDate = parseGigDate(g.date);
+  return gigDate >= today;
+});
+
+// Start rendering
+startLazyRender(gigs);
+renderText(gigs);
+
+// If you have a venue menu function
+if (typeof buildVenueMenu === "function") {
+  buildVenueMenu();
+}
+
 }
 
 
