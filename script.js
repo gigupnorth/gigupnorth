@@ -91,7 +91,7 @@ async function loadGigs() {
     if (!lazyActive) return;
 
     const scrollPos = window.innerHeight + window.scrollY;
-    const threshold = document.body.offsetHeight - 800;
+    const threshold = document.body.osetHeight - 800;
 
     if (scrollPos > threshold) {
       renderNextChunk();
@@ -101,7 +101,7 @@ async function loadGigs() {
   /* ---------------------------------------------
      CARD BUILDER (unchanged except extracted)
   --------------------------------------------- */
- ffunction buildCard(g) {
+ function buildCard(g) {
   console.log("VENUE:", g.venue);
 
   const img = venueImages[g.venue] || "";
