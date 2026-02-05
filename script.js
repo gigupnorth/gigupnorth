@@ -103,6 +103,7 @@ async function loadGigs() {
   --------------------------------------------- */
  function buildCard(g) {
   console.log("VENUE:", g.venue);
+const img = venueImages[g.venue] || "";
 const card = document.createElement("article");
   card.className = `gig-card ${
     g.venue && g.venue.toLowerCase().includes("trillians")
