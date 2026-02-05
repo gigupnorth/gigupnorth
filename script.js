@@ -110,7 +110,6 @@ const card = document.createElement("article");
       : ""
   }`;
 
-  const img = "images/the-globe.jpg"; // TEMP: force this image for all cards
 
 
     const colour = (g.colour || "black").toString().trim().toLowerCase();
