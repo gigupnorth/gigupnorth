@@ -3,7 +3,8 @@ const venueImages = {
   "The Globe": "https://gigupnorth.github.io/gigupnorth/images/globe.jpg",
   "Trillians": "https://gigupnorth.github.io/gigupnorth/images/trillians.jpg",
   "NE Volume Bar": "https://gigupnorth.github.io/gigupnorth/images/nevolume.jpg",
-  "Cobalt Studios": "https://gigupnorth.github.io/gigupnorth/images/cobalt.jpg"
+  "Cobalt Studios": "https://gigupnorth.github.io/gigupnorth/images/cobalt.jpg",
+    "The Cluny": "https://gigupnorth.github.io/gigupnorth/images/cluny1.jpg"
 };
 
 
