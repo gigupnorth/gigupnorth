@@ -1,7 +1,9 @@
 // Venue images lookup table
 const venueImages = {
-  "The Globe": "images/the-globe.jpg"
+  "The Globe": "images/the-globe.jpg",
+  "Trillians": "images/trillians.jpg"
 };
+
 let gigs = [];
   const hiddenAreas = new Set();
 
