@@ -1,8 +1,253 @@
-.venue-image {
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 6px 6px 0 0;
-  margin-bottom: 8px;
+/* --------------------------------------------------
+   GLOBAL
+-------------------------------------------------- */
+* {
+  box-sizing: border-box;
 }
 
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #111;
+  color: #fff;
+}
+
+main {
+  padding: 1rem;
+}
+
+/* --------------------------------------------------
+   STICKY TOP BAR
+-------------------------------------------------- */
+#top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  background: #111;
+  padding: 0.75rem 1rem 1rem 1rem;
+  border-bottom: 1px solid #222;
+}
+
+header h1 {
+  margin: 0 0 0.5rem 0;
+  text-align: center;
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------
+   AREA FILTER BUTTONS (FULL-WIDTH ROW)
+-------------------------------------------------- */
+.area-key {
+  display: flex;
+  width: 100%;
+  gap: 0.8rem;
+  margin: 0.5rem 0 0.75rem 0;
+}
+
+.area-key .key {
+  flex: 1;
+  padding: 1.1rem 0;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.area-key .key small {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-top: 0.25rem;
+}
+
+.area-key .slash {
+  display: none;
+}
+
+.area-key .darlo      { background: #6A8CAF; }
+.area-key .durham     { background: #7A9E7E; }
+.area-key .boro       { background: #C47A5A; }
+.area-key .newcastle  { background: #8C8C8C; }
+.area-key .sunderland { background: #D98A8A; }
+
+.area-key .key.hidden-area {
+  filter: grayscale(0.7) brightness(0.6);
+  opacity: 0.7;
+}
+
+/* --------------------------------------------------
+   CARDS / TEXT TOGGLE
+-------------------------------------------------- */
+.view-toggle {
+  display: flex;
+  gap: 1rem;
+  margin: 0.25rem 0 0.25rem 0;
+}
+
+.view-toggle button {
+  flex: 1;
+  padding: 1rem 0;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  border: 2px solid white;
+  background: #111;
+  color: #eee;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.view-toggle button.active {
+  background: #ffcc33;
+  color: #000;
+}
+
+/* --------------------------------------------------
+   CARD GRID
+-------------------------------------------------- */
+#cards-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+/* --------------------------------------------------
+   GIG CARDS
+-------------------------------------------------- */
+.gig-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 2px solid white;
+  color: #fff;
+  background: #222;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: 1.4rem;
+  line-height: 1.6;
+  min-height: 180px;
+}
+
+.gig-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+}
+
+.gig-card strong {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.gig-card[data-colour="green"]  { background: #7A9E7E; }
+.gig-card[data-colour="red"]    { background: #D98A8A; }
+.gig-card[data-colour="blue"]   { background: #6A8CAF; }
+.gig-card[data-colour="black"]  { background: #8C8C8C; }
+.gig-card[data-colour="orange"] { background: #C47A5A; }
+
+.gig-card.trillians {
+  position: relative;
+  overflow: hidden;
+}
+
+.gig-card.trillians::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  transform: translate(-50%, -50%);
+  background-image: url("https://trilliansnewcastle.co.uk/wp-content/uploads/2018/01/logo-e1515753136431-300x127.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.gig-extra.hidden {
+  display: none;
+}
+
+.more-btn {
+  margin-top: 0.6rem;
+  background: none;
+  border: none;
+  color: #ffcc33;
+  font-size: 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+/* --------------------------------------------------
+   TEXT VIEW
+-------------------------------------------------- */
+#text-view {
+  display: none;
+  white-space: pre-wrap;
+  font-family: monospace;
+  background: rgba(0,0,0,0.4);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #222;
+}
+
+#text-view .date-badge {
+  display: inline-block;
+  background: white;
+  color: black;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 1.4rem;
+  margin: 16px 0 8px 0;
+}
+
+#text-view .colour-square {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin-right: 6px;
+  vertical-align: middle;
+  border: 1px solid white;
+}
+
+#text-view .colour-square.blue   { background: #6A8CAF; }
+#text-view .colour-square.green  { background: #7A9E7E; }
+#text-view .colour-square.orange { background: #C47A5A; }
+#text-view .colour-square.black  { background: #8C8C8C; }
+#text-view .colour-square.red    { background: #D98A8A; }
+
+#text-view .gig-title-text {
+  font-size: 2.2rem;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* --------------------------------------------------
+   RESPONSIVE
+-------------------------------------------------- */
+@media (max-width: 700px) {
+  #cards-view {
+    grid-template-columns: 1fr;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+}
