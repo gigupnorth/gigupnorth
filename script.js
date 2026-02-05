@@ -1,6 +1,6 @@
 // Venue images lookup table
 /const venueImages = {
-  "The Globe": "images/globe.webp",
+  "The Globe": "images/globe.jpg",
   "Trillians": "images/trillians.jpg",
   "NE Volume Bar": "images/nevolume.jpg",
   "Cobalt Studios": "images/cobalt.jpg"
