@@ -20,17 +20,29 @@ let gigs = [];
   let scrollAttached = false; // ensures only one scroll listener
 
 async function loadGigs() {
-  let res = await fetch("https://script.google.com/macros/s/AKfycbwQai3AEldoeZlXj6PNjqWauaJn2vShdPDMcR3DeDz1DyEDh_tOJ7o152QHrvxF4oA4rw/exec");
+  const url = "https://script.google.com/macros/s/AKfycbwaDyoisj0rkvcfj8OyQCmgYT5jhiiuerQ2dBhb9ocUCQhAHvzk5UeLD1LJ9OOC4SVINg/exec";
 
-  // If Google Apps Script is waking up, retry once after 1 second
+  // First attempt
+  let res = await fetch(url);
+
+  // If Google Apps Script is still waking up, retry once after 1 second
   if (!res.ok) {
     await new Promise(r => setTimeout(r, 1000));
-    res = await fetch("https://script.google.com/macros/s/AKfycbwQai3AEldoeZlXj6PNjqWauaJn2vShdPDMcR3DeDz1DyEDh_tOJ7o152QHrvxF4oA4rw/exec");
+    res = await fetch(url);
   }
 
+  // Parse JSON
   const all = await res.json();
-  // ...rest of your code...
+
+  // Continue with your existing logic
+  lazyList = all;
+  renderIndex = 0;
+  lazyActive = false;
+
+  // Kick off the first render
+  renderNextChunk();
 }
+
 
 
   const today = new Date();
