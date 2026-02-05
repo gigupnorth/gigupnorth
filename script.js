@@ -101,69 +101,73 @@ async function loadGigs() {
   /* ---------------------------------------------
      CARD BUILDER (unchanged except extracted)
   --------------------------------------------- */
- function buildCard(g) {
+function buildCard(g) {
   console.log("VENUE:", g.venue);
 
   const img = venueImages[g.venue] || "";
 
   const card = document.createElement("article");
+
+  // Background image for full-card logo
+  if (img) {
+    card.style.backgroundImage = `url(${img})`;
+    card.style.backgroundSize = "cover";
+    card.style.backgroundPosition = "center";
+    card.style.backgroundRepeat = "no-repeat";
+  }
+
   card.className = `gig-card ${
     g.venue && g.venue.toLowerCase().includes("trillians")
       ? "trillians"
       : ""
   }`;
 
+  const colour = (g.colour || "black").toString().trim().toLowerCase();
+  card.dataset.colour = colour;
 
+  const colourToArea = {
+    blue: "Darlo",
+    green: "Durham",
+    orange: "Middlesbrough",
+    black: "Newcastle",
+    red: "Sunderland"
+  };
 
+  card.dataset.area = colourToArea[colour] || "";
 
-    const colour = (g.colour || "black").toString().trim().toLowerCase();
-    card.dataset.colour = colour;
+  const mainArea = card.dataset.area;
+  const subArea = g.subarea && g.subarea.trim() !== "" ? g.subarea.trim() : "";
+  const fullArea = subArea ? `${mainArea}, ${subArea}` : mainArea;
 
-    const colourToArea = {
-      blue: "Darlo",
-      green: "Durham",
-      orange: "Middlesbrough",
-      black: "Newcastle",
-      red: "Sunderland"
-    };
-
-    card.dataset.area = colourToArea[colour] || "";
-
-    const mainArea = card.dataset.area;
-    const subArea = g.subarea && g.subarea.trim() !== "" ? g.subarea.trim() : "";
-    const fullArea = subArea ? `${mainArea}, ${subArea}` : mainArea;
-
-   card.innerHTML = `
-  ${img ? `<img class="venue-image" src="${img}" alt="${g.venue}">` : ""}
-
-  <div class="gig-main">
-    <div class="gig-date">${g.date}</div>
-    <div class="gig-title"><strong>${g.title}</strong></div>
-    <div class="gig-venue">
-      ${g.venue}${g.extraInfo ? ", " + g.extraInfo : ""}
+  card.innerHTML = `
+    <div class="gig-main">
+      <div class="gig-date">${g.date}</div>
+      <div class="gig-title"><strong>${g.title}</strong></div>
+      <div class="gig-venue">
+        ${g.venue}${g.extraInfo ? ", " + g.extraInfo : ""}
+      </div>
+      <div class="gig-time">${parseTime(g.time) || ""}</div>
     </div>
-    <div class="gig-time">${parseTime(g.time) || ""}</div>
-  </div>
 
-  <div class="gig-extra hidden">
-    ${g.extra || ""}
-  </div>
+    <div class="gig-extra hidden">
+      ${g.extra || ""}
+    </div>
 
-  ${g.extra && g.extra.trim() !== "" ? '<button class="more-btn">more</button>' : ''}
-`;
+    ${g.extra && g.extra.trim() !== "" ? '<button class="more-btn">more</button>' : ''}
+  `;
 
-
-    const moreBtn = card.querySelector(".more-btn");
-    const extra = card.querySelector(".gig-extra");
-    if (moreBtn) {
-      moreBtn.addEventListener("click", () => {
-        extra.classList.toggle("hidden");
-        moreBtn.textContent = extra.classList.contains("hidden") ? "more" : "less";
-      });
-    }
-
-    return card;
+  const moreBtn = card.querySelector(".more-btn");
+  const extra = card.querySelector(".gig-extra");
+  if (moreBtn) {
+    moreBtn.addEventListener("click", () => {
+      extra.classList.toggle("hidden");
+      moreBtn.textContent = extra.classList.contains("hidden") ? "more" : "less";
+    });
   }
+
+  return card;
+}
+
 
   /* ---------------------------------------------
      AREA FILTERING
