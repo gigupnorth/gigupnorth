@@ -102,7 +102,8 @@ async function loadGigs() {
      CARD BUILDER (unchanged except extracted)
   --------------------------------------------- */
   function buildCard(g) {
-    const card = document.createElement("article");
+    const img = venueImages[g.venue] || "";
+const card = document.createElement("article");
     card.className = `gig-card ${
       g.venue && g.venue.toLowerCase().includes("trillians")
         ? "trillians"
@@ -126,23 +127,25 @@ async function loadGigs() {
     const subArea = g.subarea && g.subarea.trim() !== "" ? g.subarea.trim() : "";
     const fullArea = subArea ? `${mainArea}, ${subArea}` : mainArea;
 
-    card.innerHTML = `
-    
-      <div class="gig-main">
-        <div class="gig-date">${g.date}</div>
-        <div class="gig-title"><strong>${g.title}</strong></div>
-        <div class="gig-venue">
-          ${g.venue}${g.extraInfo ? ", " + g.extraInfo : ""}
-        </div>
-        <div class="gig-time">${parseTime(g.time) || ""}</div>
-      </div>
+   card.innerHTML = `
+  ${img ? `<img class="venue-image" src="${img}" alt="${g.venue}">` : ""}
 
-      <div class="gig-extra hidden">
-        ${g.extra || ""}
-      </div>
+  <div class="gig-main">
+    <div class="gig-date">${g.date}</div>
+    <div class="gig-title"><strong>${g.title}</strong></div>
+    <div class="gig-venue">
+      ${g.venue}${g.extraInfo ? ", " + g.extraInfo : ""}
+    </div>
+    <div class="gig-time">${parseTime(g.time) || ""}</div>
+  </div>
 
-      ${g.extra && g.extra.trim() !== "" ? '<button class="more-btn">more</button>' : ''}
-    `;
+  <div class="gig-extra hidden">
+    ${g.extra || ""}
+  </div>
+
+  ${g.extra && g.extra.trim() !== "" ? '<button class="more-btn">more</button>' : ''}
+`;
+
 
     const moreBtn = card.querySelector(".more-btn");
     const extra = card.querySelector(".gig-extra");
