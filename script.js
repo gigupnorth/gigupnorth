@@ -5,7 +5,8 @@ const venueImages = {
   "NE Volume Bar": "https://gigupnorth.github.io/gigupnorth/images/nevolume.jpg",
   "Cobalt Studios": "https://gigupnorth.github.io/gigupnorth/images/cobalt.jpg",
   "The Cluny": "https://gigupnorth.github.io/gigupnorth/images/cluny1.jpg",
-  "Little Buildings": "https://gigupnorth.github.io/gigupnorth/images/littlb.jpg"
+  "Little Buildings": "https://gigupnorth.github.io/gigupnorth/images/littlb.jpg",
+   "The Forum": "https://gigupnorth.github.io/gigupnorth/images/forum.jpg"
 };
 
 
