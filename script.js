@@ -7,7 +7,8 @@ const venueImages = {
   "The Cluny": "https://gigupnorth.github.io/gigupnorth/images/cluny1.jpg",
   "Little Buildings": "https://gigupnorth.github.io/gigupnorth/images/littlb.jpg",
    "The Forum": "https://gigupnorth.github.io/gigupnorth/images/forumm.jpg",
-   "Billy Bootleggers": "https://gigupnorth.github.io/gigupnorth/images/billy.jpg"
+   "Billy Bootleggers": "https://gigupnorth.github.io/gigupnorth/images/billy.jpg",
+  "The White Room Music Cafe": "https://gigupnorth.github.io/gigupnorth/images/whiter.jpg"
 };
 
 
