@@ -179,10 +179,11 @@ card.innerHTML = `
     </div>
 
     <div class="gig-extra hidden">
-      ${g.extra || ""}
-    </div>
+  ${g.extra && g.extra.trim() !== "" ? `<div>${g.extra}</div>` : ""}
+  ${g.tickets && g.tickets.trim() !== "" ? `<div><a href="${g.tickets}" target="_blank">Tickets link</a></div>` : ""}
+</div>
 
-    <div class="gig-buttons">
+<div class="gig-buttons">
   ${
     (g.extra && g.extra.trim() !== "") || (g.tickets && g.tickets.trim() !== "")
       ? `<button class="more-btn">${
@@ -190,26 +191,25 @@ card.innerHTML = `
         }</button>`
       : ""
   }
-
-  ${
-    g.tickets && g.tickets.trim() !== ""
-      ? `<a class="tickets-btn" href="${g.tickets}" target="_blank">tickets</a>`
-      : ""
-  }
 </div>
+
 
 `;
 
 
 
-  const moreBtn = card.querySelector(".more-btn");
-  const extra = card.querySelector(".gig-extra");
-  if (moreBtn) {
-    moreBtn.addEventListener("click", () => {
-      extra.classList.toggle("hidden");
-      moreBtn.textContent = extra.classList.contains("hidden") ? "more" : "less";
-    });
-  }
+ const moreBtn = card.querySelector(".more-btn");
+const extra = card.querySelector(".gig-extra");
+
+if (moreBtn) {
+  const defaultLabel = g.tickets && g.tickets.trim() !== "" ? "more / tickets" : "more";
+
+  moreBtn.addEventListener("click", () => {
+    extra.classList.toggle("hidden");
+    moreBtn.textContent = extra.classList.contains("hidden") ? defaultLabel : "less";
+  });
+}
+
 
   return card;
 }
