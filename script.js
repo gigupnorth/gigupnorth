@@ -192,6 +192,7 @@ card.innerHTML = `
 `;
 
 
+
   const moreBtn = card.querySelector(".more-btn");
   const extra = card.querySelector(".gig-extra");
   if (moreBtn) {
