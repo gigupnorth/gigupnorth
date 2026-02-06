@@ -183,12 +183,21 @@ card.innerHTML = `
     </div>
 
     <div class="gig-buttons">
-      ${g.extra && g.extra.trim() !== "" ? '<button class="more-btn">more</button>' : ''}
+  ${
+    (g.extra && g.extra.trim() !== "") || (g.tickets && g.tickets.trim() !== "")
+      ? `<button class="more-btn">${
+          g.tickets && g.tickets.trim() !== "" ? "more / tickets" : "more"
+        }</button>`
+      : ""
+  }
 
-      ${g.tickets && g.tickets.trim() !== "" 
-        ? `<a class="tickets-btn" href="${g.tickets}" target="_blank">tickets</a>` 
-        : ""}
-    </div>
+  ${
+    g.tickets && g.tickets.trim() !== ""
+      ? `<a class="tickets-btn" href="${g.tickets}" target="_blank">tickets</a>`
+      : ""
+  }
+</div>
+
 `;
 
 
