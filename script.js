@@ -168,7 +168,7 @@ function buildCard(g) {
   const subArea = g.subarea && g.subarea.trim() !== "" ? g.subarea.trim() : "";
   const fullArea = subArea ? `${mainArea}, ${subArea}` : mainArea;
 
-  card.innerHTML = `
+card.innerHTML = `
     <div class="gig-main">
       <div class="gig-date">${g.date}</div>
       <div class="gig-title"><strong>${g.title}</strong></div>
@@ -182,8 +182,15 @@ function buildCard(g) {
       ${g.extra || ""}
     </div>
 
-    ${g.extra && g.extra.trim() !== "" ? '<button class="more-btn">more</button>' : ''}
-  `;
+    <div class="gig-buttons">
+      ${g.extra && g.extra.trim() !== "" ? '<button class="more-btn">more</button>' : ''}
+
+      ${g.tickets && g.tickets.trim() !== "" 
+        ? `<a class="tickets-btn" href="${g.tickets}" target="_blank">tickets</a>` 
+        : ""}
+    </div>
+`;
+
 
   const moreBtn = card.querySelector(".more-btn");
   const extra = card.querySelector(".gig-extra");
