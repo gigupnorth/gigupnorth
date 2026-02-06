@@ -226,6 +226,27 @@ header h1 {
 .tickets-btn:hover {
   background: #e6b82e;
 }
+.more-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  margin-top: 10px;
+
+  background-color: var(--text-colour, #ffffff); /* fallback white */
+  color: black;
+
+  border: none;
+  border-radius: 999px; /* pill shape */
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.more-btn:hover {
+  background-color: #e6e6e6;
+}
 
 /* --------------------------------------------------
    TEXT VIEW
