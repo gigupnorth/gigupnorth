@@ -8,7 +8,11 @@ const venueImages = {
   "Little Buildings": "https://gigupnorth.github.io/gigupnorth/images/littlb.jpg",
    "The Forum": "https://gigupnorth.github.io/gigupnorth/images/forumm.jpg",
    "Billy Bootleggers": "https://gigupnorth.github.io/gigupnorth/images/billy.jpg",
-  "The White Room Music Cafe": "https://gigupnorth.github.io/gigupnorth/images/whiter.jpg"
+  "The White Room Music Cafe": "https://gigupnorth.github.io/gigupnorth/images/whiter.jpg",
+  "Cafe Etch": "https://gigupnorth.github.io/gigupnorth/images/etch.jpg",
+  "Cumberland Arms": "https://gigupnorth.github.io/gigupnorth/images/cumberland.jpg",
+  "Black Bull": "https://gigupnorth.github.io/gigupnorth/images/blackb.jpg",
+  "Cluny 2": "https://gigupnorth.github.io/gigupnorth/images/cluny2.jpg",
 };
 
 
