@@ -16,7 +16,7 @@ const venueImages = {
   "The Grove": "https://gigupnorth.github.io/gigupnorth/images/grove.jpg",
   "Pop Recs": "https://gigupnorth.github.io/gigupnorth/images/pop.jpg",
   "O2 City Hall": "https://gigupnorth.github.io/gigupnorth/images/o2.jpg",
-  "Zerox": "https://gigupnorth.github.io/gigupnorth/images/zerox.jpg",
+  "ZeroX": "https://gigupnorth.github.io/gigupnorth/images/zerox.jpg"
 };
 
 
