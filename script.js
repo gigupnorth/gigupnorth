@@ -13,6 +13,10 @@ const venueImages = {
   "Cumberland Arms": "https://gigupnorth.github.io/gigupnorth/images/cumberland.jpg",
   "Black Bull": "https://gigupnorth.github.io/gigupnorth/images/blackb.jpg",
   "Cluny 2": "https://gigupnorth.github.io/gigupnorth/images/cluny2.jpg",
+  "The Grove": "https://gigupnorth.github.io/gigupnorth/images/grove.jpg",
+  "Pop Recs": "https://gigupnorth.github.io/gigupnorth/images/pop.jpg",
+  "O2 City Hall": "https://gigupnorth.github.io/gigupnorth/images/o2.jpg",
+  "Zerox": "https://gigupnorth.github.io/gigupnorth/images/zerox.jpg"
 };
 
 
