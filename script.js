@@ -19,6 +19,9 @@ const venueImages = {
   "ZeroX": "https://gigupnorth.github.io/gigupnorth/images/zerox.jpg",
     "The Bunker": "https://gigupnorth.github.io/gigupnorth/images/bunker.jpg",
   "The Central": "https://gigupnorth.github.io/gigupnorth/images/central.jpg",
+   "The Lubber Fiend": "https://gigupnorth.github.io/gigupnorth/images/lubber.jpg",
+   "NX": "https://gigupnorth.github.io/gigupnorth/images/nxnew.jpg",
+   "Pielie's Barn": "https://gigupnorth.github.io/gigupnorth/images/pielie.jpg",
 };
 
 
