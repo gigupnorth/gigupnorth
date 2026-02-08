@@ -23,7 +23,7 @@ const venueImages = {
    "NX": "https://gigupnorth.github.io/gigupnorth/images/nxnew.jpg",
    "Pealie's Barn": "https://gigupnorth.github.io/gigupnorth/images/pealie.jpg",
    "Dovecot Bar": "https://gigupnorth.github.io/gigupnorth/images/dovecot.jpg",
-   "BoilerShop ": "https://gigupnorth.github.io/gigupnorth/images/boiler.jpg",
+   "Boiler Shop": "https://gigupnorth.github.io/gigupnorth/images/boiler.jpg",
    "Salt Market Social": "https://gigupnorth.github.io/gigupnorth/images/salt.jpg",
    "Station East": "https://gigupnorth.github.io/gigupnorth/images/statione.jpg",
    "Star and Shadow": "https://gigupnorth.github.io/gigupnorth/images/starands.jpg",
