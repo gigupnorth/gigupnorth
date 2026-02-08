@@ -21,11 +21,11 @@ const venueImages = {
   "The Central": "https://gigupnorth.github.io/gigupnorth/images/central.jpg",
    "The Lubber Fiend": "https://gigupnorth.github.io/gigupnorth/images/lubber.jpg",
    "NX": "https://gigupnorth.github.io/gigupnorth/images/nxnew.jpg",
-   "Pielie's Barn": "https://gigupnorth.github.io/gigupnorth/images/pielie.jpg",
+   "Pealie's Barn": "https://gigupnorth.github.io/gigupnorth/images/pealie.jpg",
    "Dovecot Bar": "https://gigupnorth.github.io/gigupnorth/images/dovecot.jpg",
    "Boiler Shop ": "https://gigupnorth.github.io/gigupnorth/images/boiler.jpg",
    "Salt Market Social": "https://gigupnorth.github.io/gigupnorth/images/salt.jpg",
-   "Sation East": "https://gigupnorth.github.io/gigupnorth/images/statione.jpg",
+   "Station East": "https://gigupnorth.github.io/gigupnorth/images/statione.jpg",
    "Star and Shadow": "https://gigupnorth.github.io/gigupnorth/images/starands.jpg",
 };
 
