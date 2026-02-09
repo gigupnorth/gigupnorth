@@ -154,23 +154,37 @@ function handleLazyScroll() {
 function buildCard(g) {
   console.log("VENUE:", g.venue);
 
-  const img = venueImages[g.venue] || "";
-
   const card = document.createElement("article");
 
-  // Background image for full-card logo
-  if (img) {
-    card.style.backgroundImage = `url(${img})`;
+  // --- IMAGE OVERRIDE LOGIC STARTS HERE ---
+
+  // Column M override (your parser must pass this in as g.imageOverride)
+  const overrideImg = g.imageOverride && g.imageOverride.trim();
+
+  // Venue fallback
+  const venueImg = venueImages[g.venue] || "";
+
+  // Choose override if present, else venue image
+  const finalImg = overrideImg || venueImg;
+
+  if (finalImg) {
+    card.style.backgroundImage = `url("${finalImg}")`;
     card.style.backgroundSize = "cover";
     card.style.backgroundPosition = "center";
     card.style.backgroundRepeat = "no-repeat";
   }
+
+  // --- IMAGE OVERRIDE LOGIC ENDS HERE ---
 
   card.className = `gig-card ${
     g.venue && g.venue.toLowerCase().includes("trillians")
       ? "trillians"
       : ""
   }`;
+
+  // ...rest of your card-building code...
+}
+
 
   const colour = (g.colour || "black").toString().trim().toLowerCase();
   card.dataset.colour = colour;
