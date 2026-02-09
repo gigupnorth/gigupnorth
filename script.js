@@ -182,8 +182,7 @@ function buildCard(g) {
       : ""
   }`;
 
-  // ...rest of your card-building code...
-}
+
 
 
   const colour = (g.colour || "black").toString().trim().toLowerCase();
