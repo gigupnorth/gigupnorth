@@ -247,6 +247,30 @@ header h1 {
 .more-btn:hover {
   background-color: #e6e6e6;
 }
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  z-index: 9999;
+}
+
+.bottom-bar button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.bottom-bar button:hover {
+  opacity: 0.6;
+}
 
 /* --------------------------------------------------
    TEXT VIEW
