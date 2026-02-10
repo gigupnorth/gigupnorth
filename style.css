@@ -202,3 +202,17 @@ header h1 {
     width: 100%;
   }
 }
+/* REMOVE OLD COLOURED CARD BACKGROUNDS */
+.gig-card[data-colour] {
+  background: transparent !important;
+}
+
+/* REMOVE OLD FULL-CARD BACKGROUND IMAGE + OVERLAY */
+.gig-card {
+  background: transparent !important;
+  overflow: visible !important;
+}
+
+.gig-card::before {
+  display: none !important;
+}
