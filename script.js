@@ -202,33 +202,98 @@ function buildCard(g) {
   const subArea = g.subarea && g.subarea.trim() !== "" ? g.subarea.trim() : "";
   const fullArea = subArea ? `${mainArea}, ${subArea}` : mainArea;
 
+ CARD BUILDER (unchanged except extracted)
+  --------------------------------------------- */
+function buildCard(g) {
+  console.log("VENUE:", g.venue);
+
+  const card = document.createElement("article");
+
+  // --- IMAGE OVERRIDE LOGIC STARTS HERE ---
+
+  // Column M override (your parser must pass this in as g.imageOverride)
+  const overrideImg = g.imageOverride && g.imageOverride.trim();
+
+  // Venue fallback
+  const venueImg = venueImages[g.venue] || "";
+
+  // Choose override if present, else venue image
+  const finalImg = overrideImg || venueImg;
+
+  if (finalImg) {
+    card.style.backgroundImage = `url("${finalImg}")`;
+    card.style.backgroundSize = "cover";
+    card.style.backgroundPosition = "center";
+    card.style.backgroundRepeat = "no-repeat";
+  }
+
+  // --- IMAGE OVERRIDE LOGIC ENDS HERE ---
+
+  card.className = `gig-card ${
+    g.venue && g.venue.toLowerCase().includes("trillians")
+      ? "trillians"
+      : ""
+  }`;
+
+
+
+
+  const colour = (g.colour || "black").toString().trim().toLowerCase();
+  card.dataset.colour = colour;
+
+  const colourToArea = {
+    blue: "Darlo",
+    green: "Durham",
+    orange: "Middlesbrough",
+    black: "Newcastle",
+    red: "Sunderland"
+  };
+
+  card.dataset.area = colourToArea[colour] || "";
+
+  const mainArea = card.dataset.area;
+  const subArea = g.subarea && g.subarea.trim() !== "" ? g.subarea.trim() : "";
+  const fullArea = subArea ? `${mainArea}, ${subArea}` : mainArea;
+
 card.innerHTML = `
-    <div class="gig-main">
-      <div class="gig-date">${g.date}</div>
-      <div class="gig-title"><strong>${g.title}</strong></div>
-      <div class="gig-venue">
-        ${g.venue}${g.extraInfo ? ", " + g.extraInfo : ""}
+  <div class="gig-card-inner">
+
+    <!-- LEFT SIDE: TEXT -->
+    <div class="gig-card-text">
+      <div class="gig-main">
+        <div class="gig-date">${g.date}</div>
+        <div class="gig-title"><strong>${g.title}</strong></div>
+        <div class="gig-venue">
+          ${g.venue}${g.extraInfo ? ", " + g.extraInfo : ""}
+        </div>
+        <div class="gig-time">${parseTime(g.time) || ""}</div>
       </div>
-      <div class="gig-time">${parseTime(g.time) || ""}</div>
+
+      <div class="gig-extra hidden">
+        ${g.extra && g.extra.trim() !== "" ? `<div>${g.extra}</div>` : ""}
+        ${g.tickets && g.tickets.trim() !== "" ? `<div><a href="${g.tickets}" target="_blank">Tickets link</a></div>` : ""}
+      </div>
+
+      <div class="gig-buttons">
+        ${
+          (g.extra && g.extra.trim() !== "") || (g.tickets && g.tickets.trim() !== "")
+            ? `<button class="more-btn">${
+                g.tickets && g.tickets.trim() !== "" ? "more / tickets" : "more"
+              }</button>`
+            : ""
+        }
+      </div>
     </div>
 
-    <div class="gig-extra hidden">
-  ${g.extra && g.extra.trim() !== "" ? `<div>${g.extra}</div>` : ""}
-  ${g.tickets && g.tickets.trim() !== "" ? `<div><a href="${g.tickets}" target="_blank">Tickets link</a></div>` : ""}
-</div>
+    <!-- RIGHT SIDE: IMAGE -->
+    <div class="gig-card-image"></div>
 
-<div class="gig-buttons">
-  ${
-    (g.extra && g.extra.trim() !== "") || (g.tickets && g.tickets.trim() !== "")
-      ? `<button class="more-btn">${
-          g.tickets && g.tickets.trim() !== "" ? "more / tickets" : "more"
-        }</button>`
-      : ""
-  }
-</div>
-
-
+  </div>
 `;
+const imgDiv = card.querySelector(".gig-card-image");
+if (finalImg) {
+  imgDiv.style.backgroundImage = `url("${finalImg}")`;
+}
 
 
 
