@@ -382,3 +382,53 @@ header h1 {
     width: 100%;
   }
 }
+/* --------------------------------------------------
+   TWO-COLUMN CARD LAYOUT
+-------------------------------------------------- */
+
+.gig-card {
+  padding: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #222;
+  border: 2px solid white;
+}
+
+.gig-card-inner {
+  display: flex;
+  width: 100%;
+  min-height: 180px;
+}
+
+/* LEFT SIDE — TEXT (75%) */
+.gig-card-text {
+  flex: 3;
+  padding: 1.2rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* RIGHT SIDE — IMAGE (25%) */
+.gig-card-image {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Remove old full-card overlay */
+.gig-card::before {
+  display: none;
+}
+
+/* Mobile: stack vertically */
+@media (max-width: 700px) {
+  .gig-card-inner {
+    flex-direction: column;
+  }
+  .gig-card-image {
+    height: 180px;
+    width: 100%;
+  }
+}
