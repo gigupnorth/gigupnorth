@@ -216,3 +216,12 @@ header h1 {
 .gig-card::before {
   display: none !important;
 }
+/* BIGGER TITLE / ARTIST TEXT */
+.gig-title strong {
+  font-size: 2.8rem;   /* roughly double your current size */
+  line-height: 1.2;
+  font-weight: 800;
+}
+.gig-title {
+  margin-bottom: 0.4rem;
+}
