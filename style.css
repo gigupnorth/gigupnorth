@@ -411,11 +411,11 @@ header h1 {
 
 /* RIGHT SIDE — IMAGE (25%) */
 .gig-card-image {
-  flex: 1;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  border: 2px solid white;
+  border-radius: 12px;
+  margin: 0.8rem;
 }
+
 
 /* Remove old full-card overlay */
 .gig-card::before {
@@ -431,4 +431,7 @@ header h1 {
     height: 180px;
     width: 100%;
   }
+}
+.gig-card-text {
+  background: none !important;
 }
