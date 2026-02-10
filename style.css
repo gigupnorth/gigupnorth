@@ -38,7 +38,7 @@ header h1 {
 }
 
 /* --------------------------------------------------
-   AREA FILTER BUTTONS (FULL-WIDTH ROW)
+   AREA FILTER BUTTONS
 -------------------------------------------------- */
 .area-key {
   display: flex;
@@ -66,10 +66,6 @@ header h1 {
   font-size: 0.85rem;
   opacity: 0.9;
   margin-top: 0.25rem;
-}
-
-.area-key .slash {
-  display: none;
 }
 
 .area-key .darlo      { background: #6A8CAF; }
@@ -111,165 +107,73 @@ header h1 {
 }
 
 /* --------------------------------------------------
-   CARD GRID
+   CARD LIST (vertical)
 -------------------------------------------------- */
 #cards-view {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1rem;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
   padding: 1rem 0;
 }
 
 /* --------------------------------------------------
-   GIG CARDS
+   CLEAN TWO-COLUMN CARD LAYOUT
 -------------------------------------------------- */
 .gig-card {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.gig-card-inner {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  min-height: 180px;
+  align-items: stretch;
+}
+
+/* LEFT SIDE — TEXT (75%) */
+.gig-card-text {
+  flex: 3;
+  padding: 0.5rem 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-sizing: border-box;
-  width: 100%;
-  padding: 1rem;
-  border-radius: 12px;
+  background: none !important;
+}
+
+/* RIGHT SIDE — IMAGE (25%) */
+.gig-card-image {
+  flex: 1;
   border: 2px solid white;
-  color: #fff;
-  background: #222;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  font-size: 1.4rem;
-  line-height: 1.6;
-  min-height: 180px;
-}
-
-.gig-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
-}
-
-.gig-card strong {
-  font-size: 1.6rem;
-  font-weight: 700;
-}
-
-.gig-card[data-colour="green"]  { background: #7A9E7E; }
-.gig-card[data-colour="red"]    { background: #D98A8A; }
-.gig-card[data-colour="blue"]   { background: #6A8CAF; }
-.gig-card[data-colour="black"]  { background: #8C8C8C; }
-.gig-card[data-colour="orange"] { background: #C47A5A; }
-
-
-
-
-
-.gig-extra.hidden {
-  display: none;
-}
-/* --------------------------------------------------
-   FULL-CARD BACKGROUND IMAGE + DARK OVERLAY
--------------------------------------------------- */
-
-.gig-card {
-  position: relative;
-  overflow: hidden;
+  border-radius: 12px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-/* Dark overlay to improve text readability */
+/* Remove old overlay */
 .gig-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.55); /* adjust darkness here */
-  z-index: 1;
+  display: none !important;
 }
 
-/* Ensure all card content sits above the overlay */
-.gig-card > * {
-  position: relative;
-  z-index: 2;
-}
-
-.more-btn {
-  margin-top: 0.6rem;
-  background: none;
-  border: none;
-  color: #ffcc33;
-  font-size: 1.4rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
-  text-align: left;
-}
 /* --------------------------------------------------
-   TICKETS BUTTON
+   BUTTONS
 -------------------------------------------------- */
-
 .gig-buttons {
-  display: flex;
-  gap: 0.8rem;
   margin-top: 0.6rem;
 }
 
-.tickets-btn {
-  background: #ffcc33;
-  color: #000;
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 1.2rem;
-  display: inline-block;
-}
-
-.tickets-btn:hover {
-  background: #e6b82e;
-}
 .more-btn {
-  display: block;
-  width: 100%;
-  padding: 10px 14px;
-  margin-top: 10px;
-
-  background-color: var(--text-colour, #ffffff); /* fallback white */
-  color: black;
-
-  border: none;
-  border-radius: 999px; /* pill shape */
-  font-weight: 600;
-  text-align: center;
-  cursor: pointer;
-
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.more-btn:hover {
-  background-color: #e6e6e6;
-}
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+  display: inline-block;
+  padding: 8px 14px;
   background: white;
-  border-top: 1px solid #ddd;
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  z-index: 9999;
-}
-
-.bottom-bar button {
-  background: none;
-  border: none;
-  font-size: 20px;
-  padding: 10px;
+  color: black;
+  border-radius: 999px;
+  font-weight: 600;
   cursor: pointer;
-}
-
-.bottom-bar button:hover {
-  opacity: 0.6;
+  border: none;
 }
 
 /* --------------------------------------------------
@@ -285,153 +189,16 @@ header h1 {
   border: 1px solid #222;
 }
 
-#text-view .date-badge {
-  display: inline-block;
-  background: white;
-  color: black;
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-weight: bold;
-  font-size: 1.4rem;
-  margin: 16px 0 8px 0;
-}
-
-#text-view .colour-square {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  margin-right: 6px;
-  vertical-align: middle;
-  border: 1px solid white;
-}
-
-#text-view .colour-square.blue   { background: #6A8CAF; }
-#text-view .colour-square.green  { background: #7A9E7E; }
-#text-view .colour-square.orange { background: #C47A5A; }
-#text-view .colour-square.black  { background: #8C8C8C; }
-#text-view .colour-square.red    { background: #D98A8A; }
-
-#text-view .gig-title-text {
-  font-size: 2.2rem;
-  font-weight: 700;
-  display: block;
-  margin-bottom: 4px;
-}
-
 /* --------------------------------------------------
-   RESPONSIVE
+   MOBILE
 -------------------------------------------------- */
-@media (max-width: 700px) {
-  #cards-view {
-    grid-template-columns: 1fr;
-  }
-
-  header h1 {
-    font-size: 2rem;
-  }
-}
-/* --------------------------------------------------
-   FATSOMA-STYLE TWO COLUMN LAYOUT
--------------------------------------------------- */
-
-.layout {
-  display: flex;
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem 0;
-}
-
-.layout-left {
-  flex: 0 0 260px;
-  position: sticky;
-  top: 120px; /* sits below your sticky top bar */
-  height: fit-content;
-}
-
-.layout-right {
-  flex: 1;
-}
-
-/* Replace the grid with a vertical stack */
-.layout-right #cards-view {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 0;
-}
-
-/* Optional: make cards look more Fatsoma-like */
-.gig-card {
-  border: none;
-  background: #1a1a1a;
-  border-radius: 14px;
-  padding: 1.2rem 1.4rem;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-  min-height: auto;
-}
-
-/* Mobile: stack columns */
-@media (max-width: 768px) {
-  .layout {
-    flex-direction: column;
-  }
-  .layout-left {
-    position: static;
-    width: 100%;
-  }
-}
-/* --------------------------------------------------
-   TWO-COLUMN CARD LAYOUT
--------------------------------------------------- */
-
-.gig-card {
-  padding: 0;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #222;
-  border: 2px solid white;
-}
-
-.gig-card-inner {
-  display: flex;
-  width: 100%;
-  min-height: 180px;
-}
-
-/* LEFT SIDE — TEXT (75%) */
-.gig-card-text {
-  flex: 3;
-  padding: 1.2rem 1.4rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-/* RIGHT SIDE — IMAGE (25%) */
-.gig-card-image {
-  border: 2px solid white;
-  border-radius: 12px;
-  margin: 0.8rem;
-}
-
-
-/* Remove old full-card overlay */
-.gig-card::before {
-  display: none;
-}
-
-/* Mobile: stack vertically */
 @media (max-width: 700px) {
   .gig-card-inner {
     flex-direction: column;
   }
+
   .gig-card-image {
-    height: 180px;
+    height: 200px;
     width: 100%;
   }
-}
-.gig-card-text {
-  background: none !important;
 }
