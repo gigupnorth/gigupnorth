@@ -27,6 +27,8 @@ const venueImages = {
    "Salt Market Social": "https://gigupnorth.github.io/gigupnorth/images/salt.jpg",
    "Station East": "https://gigupnorth.github.io/gigupnorth/images/statione.jpg",
    "Star and Shadow": "https://gigupnorth.github.io/gigupnorth/images/starands.jpg",
+  "The Quakerhouse": "https://gigupnorth.github.io/gigupnorth/images/quaker.jpg",
+  "Wylam Brewery": "https://gigupnorth.github.io/gigupnorth/images/wylam.jpg",
 };
 
 
