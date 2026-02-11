@@ -351,8 +351,8 @@ function showCards() {
 
   document.querySelectorAll(".view-cards-btn").forEach(btn => btn.classList.add("active"));
   document.querySelectorAll(".view-text-btn").forEach(btn => btn.classList.remove("active"));
+startLazy(getVisibleGigs());
 
-  startLazyRender(getVisibleGigs());
 }
 
 function showText() {
@@ -383,7 +383,8 @@ function showText() {
         btn.classList.add("hidden-area");
       }
 
-      startLazyRender(getVisibleGigs());
+      startLazy(getVisibleGigs());
+
       renderText(getVisibleGigs());
     });
   });
