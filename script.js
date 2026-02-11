@@ -145,7 +145,7 @@ function handleLazyScroll() {
   const threshold = document.body.offsetHeight - 800;
 
   if (scrollPos > threshold) {
-    renderNextChunk();
+    NextChunk();
   }
 }
 
