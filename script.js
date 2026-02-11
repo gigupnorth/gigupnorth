@@ -287,7 +287,7 @@ function buildCard(g) {
   /* ---------------------------------------------
      TEXT VIEW
   --------------------------------------------- */
-  function escapeHTML(str) {
+ function escapeHTML(str) {
   return String(str)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -302,36 +302,29 @@ function renderText(list = gigs) {
 
   list.forEach(g => {
     const t = parseTime(g.time);
-    const colour = (g.colour || "black").toString().trim().toLowerCase();
 
-    // New date badge
+    // DATE HEADER (plain text)
     if (g.date !== lastDate) {
-      lines.push(`<span class="date-badge">${escapeHTML(g.date)}</span>`);
+      lines.push(`=== ${escapeHTML(g.date)} ===`);
       lastDate = g.date;
     }
 
-    // Title (big)
-    let line = `<span class="gig-title-text">${escapeHTML(g.title)}</span>`;
-
-    // Time
+    // TITLE + TIME + EXTRA (plain text)
+    let line = `${escapeHTML(g.title)}`;
     if (t) line += ` — ${escapeHTML(t)}`;
-
-    // Extra info
     if (g.extra) line += ` — ${escapeHTML(g.extra)}`;
-
     lines.push(line);
 
-    // Venue line (with colour square)
-    lines.push(
-      `<span class="colour-square ${colour}"></span> ${escapeHTML(g.venue)}`
-    );
+    // VENUE (plain text)
+    lines.push(`${escapeHTML(g.venue)}`);
 
-    // Blank line between gigs
+    // Blank line
     lines.push("");
   });
 
   container.innerHTML = lines.join("<br>");
 }
+
 
   function getVisibleGigs() {
     return gigs.filter(g => {
