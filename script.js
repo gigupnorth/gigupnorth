@@ -163,6 +163,18 @@ function buildCard(g) {
   const overrideImg = g.imageOverride && g.imageOverride.trim();
   const venueImg = venueImages[g.venue] || "";
   const finalImg = overrideImg || venueImg;
+const imgDiv = card.querySelector(".gig-card-image");
+const testImg = new Image();
+
+testImg.onload = () => {
+  imgDiv.style.backgroundImage = `url("${finalImg}")`;
+};
+
+testImg.onerror = () => {
+  imgDiv.style.backgroundImage = `url("${venueImg}")`;
+};
+
+testImg.src = finalImg || venueImg;
 
   /* ---------------------------------------------
      COLOUR + AREA TAGGING
