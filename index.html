@@ -21,6 +21,7 @@
 <body>
 
   <!-- ⭐ STICKY BAR: TITLE + AREA BUTTONS + CARDS/TEXT -->
+
 <div id="top-bar">
   <header class="gun-header">
 
@@ -31,9 +32,9 @@
     </div>
 
     <!-- RIGHT: your logo -->
-    <img class="gun-logo" src="images/your-logo.png" alt="Gig Up North logo">
+    <img class="gun-logo" src="images/gun-logo.png" alt="Gig Up North logo">
 
-    <!-- AREA FILTER BOXES (unchanged) -->
+    <!-- AREA FILTER BOXES -->
     <div class="area-key">
       <span class="key darlo" data-area="Darlo">
         Darlo
@@ -60,6 +61,15 @@
         <small>(showing)</small>
       </span>
     </div>
+
+    <!-- VIEW TOGGLE BUTTONS -->
+    <div class="view-toggle">
+      <button class="toggle-cards active" onclick="showCards()">CARDS view</button>
+      <button class="toggle-text" onclick="showText()">TEXT view</button>
+    </div>
+
+  </header>
+</div>
 
     <!-- VIEW TOGGLE BUTTONS (unchanged) -->
     <div class="view-toggle">
