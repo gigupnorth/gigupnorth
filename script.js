@@ -129,7 +129,8 @@ if (typeof buildVenueMenu === "function") {
 
     filterCardsByArea();
 
-    if (renderIndex >= lazyList.length) {
+ if (Index >= lazyList.length) {
+
       lazyActive = false;
     }
   }
