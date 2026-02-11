@@ -152,7 +152,6 @@ function handleLazyScroll() {
      CARD BUILDER (unchanged except extracted)
   --------------------------------------------- */
 
-
 function buildCard(g) {
   console.log("VENUE:", g.venue);
 
@@ -235,7 +234,7 @@ function buildCard(g) {
   `;
 
   /* ---------------------------------------------
-     APPLY IMAGE WITH FALLBACK
+     APPLY IMAGE WITH FALLBACK (CORRECT PLACE)
   --------------------------------------------- */
   const imgDiv = card.querySelector(".gig-card-image");
   const testImg = new Image();
