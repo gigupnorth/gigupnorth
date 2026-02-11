@@ -344,25 +344,26 @@ function renderText(list = gigs) {
   /* ---------------------------------------------
      VIEW TOGGLES
   --------------------------------------------- */
-  function showCards() {
-    document.getElementById("cards-view").style.display = "grid";
-    document.getElementById("text-view").style.display = "none";
+function showCards() {
+  document.getElementById("cards-view").style.display = "grid";
+  document.getElementById("text-view").style.display = "none";
 
-    document.querySelectorAll(".toggle-cards").forEach(btn => btn.classList.add("active"));
-    document.querySelectorAll(".toggle-text").forEach(btn => btn.classList.remove("active"));
+  document.querySelectorAll(".view-cards-btn").forEach(btn => btn.classList.add("active"));
+  document.querySelectorAll(".view-text-btn").forEach(btn => btn.classList.remove("active"));
 
-    startLazyRender(getVisibleGigs());
-  }
+  startLazyRender(getVisibleGigs());
+}
 
-  function showText() {
-    document.getElementById("cards-view").style.display = "none";
-    document.getElementById("text-view").style.display = "block";
+function showText() {
+  document.getElementById("cards-view").style.display = "none";
+  document.getElementById("text-view").style.display = "block";
 
-    document.querySelectorAll(".toggle-cards").forEach(btn => btn.classList.remove("active"));
-    document.querySelectorAll(".toggle-text").forEach(btn => btn.classList.add("active"));
+  document.querySelectorAll(".view-cards-btn").forEach(btn => btn.classList.remove("active"));
+  document.querySelectorAll(".view-text-btn").forEach(btn => btn.classList.add("active"));
 
-    renderText(getVisibleGigs());
-  }
+  renderText(getVisibleGigs());
+}
+
 
   /* ---------------------------------------------
      AREA BUTTONS
