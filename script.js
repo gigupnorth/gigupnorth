@@ -36,10 +36,10 @@ let gigs = [];
   const hiddenAreas = new Set();
 
   /* ---------------------------------------------
-     LAZY RENDER GLOBALS
+     LAZY  GLOBALS
   --------------------------------------------- */
-  let lazyList = [];          // gigs currently being rendered (after filters)
-  let renderIndex = 0;        // where we are in the list
+  let lazyList = [];          // gigs currently being ed (after filters)
+  let Index = 0;        // where we are in the list
   const CHUNK_SIZE = 40;      // tweak this if needed
   let lazyActive = false;     // prevents double-triggering
   let scrollAttached = false; // ensures only one scroll listener
@@ -70,9 +70,9 @@ gigs = all.filter(g => {
   return gigDate >= today;
 });
 
-// Start rendering
-startLazyRender(gigs);
-renderText(gigs);
+// Start ing
+startLazy(gigs);
+Text(gigs);
 
 // If you have a venue menu function
 if (typeof buildVenueMenu === "function") {
@@ -93,17 +93,17 @@ if (typeof buildVenueMenu === "function") {
   }
 
   /* ---------------------------------------------
-     LAZY RENDER: START
+     LAZY : START
   --------------------------------------------- */
-  function startLazyRender(list) {
+  function startLazy(list) {
     const container = document.getElementById("cards-view");
     container.innerHTML = "";
 
     lazyList = list;
-    renderIndex = 0;
+    Index = 0;
     lazyActive = true;
 
-    renderNextChunk();
+    NextChunk();
 
     if (!scrollAttached) {
       window.addEventListener("scroll", handleLazyScroll);
@@ -112,20 +112,20 @@ if (typeof buildVenueMenu === "function") {
   }
 
   /* ---------------------------------------------
-     LAZY RENDER: CHUNK RENDERING
+     LAZY : CHUNK ING
   --------------------------------------------- */
-  function renderNextChunk() {
+  function NextChunk() {
     if (!lazyActive) return;
 
     const container = document.getElementById("cards-view");
-    const slice = lazyList.slice(renderIndex, renderIndex + CHUNK_SIZE);
+    const slice = lazyList.slice(Index, Index + CHUNK_SIZE);
 
     slice.forEach(g => {
       const card = buildCard(g);
       container.appendChild(card);
     });
 
-    renderIndex += CHUNK_SIZE;
+    Index += CHUNK_SIZE;
 
     filterCardsByArea();
 
@@ -287,44 +287,51 @@ function buildCard(g) {
   /* ---------------------------------------------
      TEXT VIEW
   --------------------------------------------- */
-  function renderText(list = gigs) {
-    const container = document.getElementById("text-view");
+  function escapeHTML(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
 
-    let lastDate = "";
-    let lines = [];
+function renderText(list = gigs) {
+  const container = document.getElementById("text-view");
 
-    list.forEach(g => {
-      const t = parseTime(g.time);
+  let lastDate = "";
+  let lines = [];
 
-      if (g.date !== lastDate) {
-        lines.push(`<span class="date-badge">${g.date}</span>`);
-        lastDate = g.date;
-      }
+  list.forEach(g => {
+    const t = parseTime(g.time);
+    const colour = (g.colour || "black").toString().trim().toLowerCase();
 
-      const colour = (g.colour || "black").toString().trim().toLowerCase();
-    
+    // New date badge
+    if (g.date !== lastDate) {
+      lines.push(`<span class="date-badge">${escapeHTML(g.date)}</span>`);
+      lastDate = g.date;
+    }
 
-      // Title / artist first (ONLY this part gets bigger)
-let line = `<span class="gig-title-text">${g.title}</span>`;
+    // Title (big)
+    let line = `<span class="gig-title-text">${escapeHTML(g.title)}</span>`;
 
-// Add time (normal size)
-if (t) line += ` — ${t}`;
+    // Time
+    if (t) line += ` — ${escapeHTML(t)}`;
 
-// Add extra info (normal size)
-if (g.extra) line += ` — ${g.extra}`;
+    // Extra info
+    if (g.extra) line += ` — ${escapeHTML(g.extra)}`;
 
-lines.push(line);
+    lines.push(line);
 
-// Venue LAST
-lines.push(`<span class="colour-square ${colour}"></span> ${g.venue}`);
+    // Venue line (with colour square)
+    lines.push(
+      `<span class="colour-square ${colour}"></span> ${escapeHTML(g.venue)}`
+    );
 
-lines.push(""); // blank line between gigs
+    // Blank line between gigs
+    lines.push("");
+  });
 
-
-    });
-
-    container.innerHTML = lines.join("<br>");
-  }
+  container.innerHTML = lines.join("<br>");
+}
 
   function getVisibleGigs() {
     return gigs.filter(g => {
