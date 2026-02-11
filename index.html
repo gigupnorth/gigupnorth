@@ -21,43 +21,55 @@
 <body>
 
   <!-- ⭐ STICKY BAR: TITLE + AREA BUTTONS + CARDS/TEXT -->
-  <div id="top-bar">
-    <header>
-      <h1>Gig Up North</h1>
+<div id="top-bar">
+  <header class="gun-header">
 
-      <div class="area-key">
-        <span class="key darlo" data-area="Darlo">
-          Darlo
-          <small>(showing)</small>
-        </span>
+    <!-- LEFT: stacked title -->
+    <div class="gun-title">
+      <span class="line1">gig up</span>
+      <span class="line2">north</span>
+    </div>
 
-        <span class="key durham" data-area="Durham">
-          Durham
-          <small>(showing)</small>
-        </span>
+    <!-- RIGHT: your logo -->
+    <img class="gun-logo" src="images/your-logo.png" alt="Gig Up North logo">
 
-        <span class="key boro" data-area="Middlesbrough">
-          Middlesbrough
-          <small>(showing)</small>
-        </span>
+    <!-- AREA FILTER BOXES (unchanged) -->
+    <div class="area-key">
+      <span class="key darlo" data-area="Darlo">
+        Darlo
+        <small>(showing)</small>
+      </span>
 
-        <span class="key newcastle" data-area="Newcastle">
-          Newcastle
-          <small>(showing)</small>
-        </span>
+      <span class="key durham" data-area="Durham">
+        Durham
+        <small>(showing)</small>
+      </span>
 
-        <span class="key sunderland" data-area="Sunderland">
-          Sunderland
-          <small>(showing)</small>
-        </span>
-      </div>
+      <span class="key boro" data-area="Middlesbrough">
+        Middlesbrough
+        <small>(showing)</small>
+      </span>
 
-      <div class="view-toggle">
-        <button class="toggle-cards active" onclick="showCards()">CARDS view</button>
-        <button class="toggle-text" onclick="showText()">TEXT view</button>
-      </div>
-    </header>
-  </div>
+      <span class="key newcastle" data-area="Newcastle">
+        Newcastle
+        <small>(showing)</small>
+      </span>
+
+      <span class="key sunderland" data-area="Sunderland">
+        Sunderland
+        <small>(showing)</small>
+      </span>
+    </div>
+
+    <!-- VIEW TOGGLE BUTTONS (unchanged) -->
+    <div class="view-toggle">
+      <button class="toggle-cards active" onclick="showCards()">CARDS view</button>
+      <button class="toggle-text" onclick="showText()">TEXT view</button>
+    </div>
+
+  </header>
+</div>
+
 
   <!-- ⭐ ONLY THE CONTENT BELOW SCROLLS -->
  <main class="layout">
