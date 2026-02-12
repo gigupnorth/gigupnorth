@@ -288,12 +288,4 @@ main {
 .gig-card[data-colour="black"] .gig-text-wrapper {
   background-color: #f2f2f2;
 }
-/* KILL ALL OLD OVERLAYS COMPLETELY */
-.gig-card::before,
-.gig-card-inner::before,
-.gig-card-text::before {
-  content: none !important;
-  background: none !important;
-  opacity: 1 !important;
-  display: none !important;
-}
+
