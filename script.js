@@ -196,45 +196,43 @@ function buildCard(g) {
     <div class="gig-card-inner">
 
       <!-- LEFT SIDE: TEXT -->
-      <div class="gig-card-text">
+<div class="gig-card-text">
+  <div class="gig-text-wrapper">
 
-        <div class="gig-main">
-          <div class="gig-date">${g.date}</div>
-          <div class="gig-title"><strong>${g.title}</strong></div>
-          <div class="gig-venue">
-            ${g.venue}${g.extraInfo ? ", " + g.extraInfo : ""}
-          </div>
-          <div class="gig-time">${parseTime(g.time) || ""}</div>
-        </div>
-
-        <div class="gig-extra hidden">
-          ${g.extra && g.extra.trim() !== "" ? `<div>${g.extra}</div>` : ""}
-          ${
-            g.tickets && g.tickets.trim() !== ""
-              ? `<div><a href="${g.tickets}" target="_blank">Tickets link</a></div>`
-              : ""
-          }
-        </div>
-
-        <div class="gig-buttons">
-          ${
-            (g.extra && g.extra.trim() !== "") ||
-            (g.tickets && g.tickets.trim() !== "")
-              ? `<button class="more-btn">${
-                  g.tickets && g.tickets.trim() !== ""
-                    ? "more / tickets"
-                    : "more"
-                }</button>`
-              : ""
-          }
-        </div>
-
+    <div class="gig-main">
+      <div class="gig-date">${g.date}</div>
+      <div class="gig-title"><strong>${g.title}</strong></div>
+      <div class="gig-venue">
+        ${g.venue}${g.extraInfo ? ", " + g.extraInfo : ""}
       </div>
-
-      <!-- RIGHT SIDE: IMAGE -->
-      <div class="gig-card-image"></div>
-
+      <div class="gig-time">${parseTime(g.time) || ""}</div>
     </div>
+
+    <div class="gig-extra hidden">
+      ${g.extra && g.extra.trim() !== "" ? `<div>${g.extra}</div>` : ""}
+      ${
+        g.tickets && g.tickets.trim() !== ""
+          ? `<div><a href="${g.tickets}" target="_blank">Tickets link</a></div>`
+          : ""
+      }
+    </div>
+
+    <div class="gig-buttons">
+      ${
+        (g.extra && g.extra.trim() !== "") ||
+        (g.tickets && g.tickets.trim() !== "")
+          ? `<button class="more-btn">${
+              g.tickets && g.tickets.trim() !== ""
+                ? "more / tickets"
+                : "more"
+            }</button>`
+          : ""
+      }
+    </div>
+
+  </div> <!-- end gig-text-wrapper -->
+</div>
+
   `;
 
   /* ---------------------------------------------
