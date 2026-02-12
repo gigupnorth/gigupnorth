@@ -29,6 +29,7 @@ const venueImages = {
    "Star and Shadow": "https://gigupnorth.github.io/gigupnorth/images/starands.jpg",
   "The Quakerhouse": "https://gigupnorth.github.io/gigupnorth/images/quaker.jpg",
   "Wylam Brewery": "https://gigupnorth.github.io/gigupnorth/images/wylam.jpg",
+    "The Angel": "https://gigupnorth.github.io/gigupnorth/images/angel.jpg",
 };
 
 
