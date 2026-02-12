@@ -161,6 +161,8 @@ function buildCard(g) {
 
   const card = document.createElement("article");
   card.className = "gig-card";
+// Apply the colour from Column J to the wrapper
+card.style.setProperty("--gig-colour", g.colour || "#ffffff");
 
   /* ---------------------------------------------
      IMAGE OVERRIDE LOGIC
