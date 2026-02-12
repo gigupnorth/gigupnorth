@@ -289,3 +289,9 @@ main {
   background-color: #f2f2f2;
 }
 
+#cards-view {
+  background: none !important;
+}
+.gig-card-inner {
+  background: none !important;
+}
