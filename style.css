@@ -258,4 +258,19 @@ main {
 .gig-title {
   margin-bottom: 0.4rem;
 }
+/* --------------------------------------------------
+   COLOURED TEXT BOX WRAPPER (LEFT COLUMN ONLY)
+-------------------------------------------------- */
+.gig-text-wrapper {
+    background-color: var(--gig-colour, #ffffff);
+    border-radius: 14px;
+    padding: 16px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* Ensure the gap between text + image stays consistent */
+.gig-card-inner {
+    gap: 1rem; /* matches your existing spacing */
+}
 
