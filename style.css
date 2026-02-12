@@ -283,6 +283,9 @@ main {
   background-color: #e0e0e0; /* light grey */
 }
 
+.gig-text-wrapper {
+  color: #000;
+}
 
 
 /* Ensure the gap between text + image stays consistent */
