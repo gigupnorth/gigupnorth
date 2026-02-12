@@ -274,3 +274,22 @@ main {
     gap: 1rem; /* matches your existing spacing */
 }
 
+.gig-card[data-colour="blue"] .gig-text-wrapper {
+  background-color: #eaf4ff;
+}
+
+.gig-card[data-colour="green"] .gig-text-wrapper {
+  background-color: #edf9ed;
+}
+
+.gig-card[data-colour="orange"] .gig-text-wrapper {
+  background-color: #fff3e6;
+}
+
+.gig-card[data-colour="red"] .gig-text-wrapper {
+  background-color: #ffecec;
+}
+
+.gig-card[data-colour="black"] .gig-text-wrapper {
+  background-color: #f2f2f2;
+}
