@@ -263,31 +263,34 @@ main {
     height: 100%;
     box-sizing: border-box;
 }
+.gig-card[data-colour="blue"] .gig-text-wrapper {
+  background-color: #c7e2ff; /* soft sky blue */
+}
+
+.gig-card[data-colour="green"] .gig-text-wrapper {
+  background-color: #d4f2d4; /* mint green */
+}
+
+.gig-card[data-colour="orange"] .gig-text-wrapper {
+  background-color: #ffd8b3; /* peach */
+}
+
+.gig-card[data-colour="red"] .gig-text-wrapper {
+  background-color: #ffcccc; /* soft rose */
+}
+
+.gig-card[data-colour="black"] .gig-text-wrapper {
+  background-color: #e0e0e0; /* light grey */
+}
+
+
 
 /* Ensure the gap between text + image stays consistent */
 .gig-card-inner {
     gap: 1rem; /* matches your existing spacing */
 }
 
-.gig-card[data-colour="blue"] .gig-text-wrapper {
-  background-color: #eaf4ff;
-}
 
-.gig-card[data-colour="green"] .gig-text-wrapper {
-  background-color: #edf9ed;
-}
-
-.gig-card[data-colour="orange"] .gig-text-wrapper {
-  background-color: #fff3e6;
-}
-
-.gig-card[data-colour="red"] .gig-text-wrapper {
-  background-color: #ffecec;
-}
-
-.gig-card[data-colour="black"] .gig-text-wrapper {
-  background-color: #f2f2f2;
-}
 
 #cards-view {
   background: none !important;
