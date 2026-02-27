@@ -1,6 +1,7 @@
 // Venue images lookup table
 const venueImages = {
   "The Globe": "https://gigupnorth.github.io/gigupnorth/images/globe.jpg",
+   "The Studio": "https://gigupnorth.github.io/gigupnorth/images/studio.jpg",
   "Trillians": "https://gigupnorth.github.io/gigupnorth/images/trillians.jpg",
   "NE Volume Bar": "https://gigupnorth.github.io/gigupnorth/images/nevolume.jpg",
   "Cobalt Studios": "https://gigupnorth.github.io/gigupnorth/images/cobalt.jpg",
