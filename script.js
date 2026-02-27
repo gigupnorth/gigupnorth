@@ -31,6 +31,7 @@ const venueImages = {
   "Wylam Brewery": "https://gigupnorth.github.io/gigupnorth/images/wylam.jpg",
     "The Angel": "https://gigupnorth.github.io/gigupnorth/images/angel.jpg",
   "The Fire Station": "https://gigupnorth.github.io/gigupnorth/images/fire.jpg",
+   "Georgian Theatre": "https://gigupnorth.github.io/gigupnorth/images/george.jpg",
 };
 
 
