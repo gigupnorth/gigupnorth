@@ -32,6 +32,7 @@ const venueImages = {
     "The Angel": "https://gigupnorth.github.io/gigupnorth/images/angel.jpg",
   "The Fire Station": "https://gigupnorth.github.io/gigupnorth/images/fire.jpg",
    "Georgian Theatre": "https://gigupnorth.github.io/gigupnorth/images/george.jpg",
+  "Red": "https://gigupnorth.github.io/gigupnorth/images/red.jpg",
 };
 
 
