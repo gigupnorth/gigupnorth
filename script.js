@@ -268,8 +268,7 @@ card.innerHTML = `
   const extra = card.querySelector(".gig-extra");
 
   if (moreBtn) {
-    const defaultLabel =
-      g.tickets && g.tickets.trim() !== "" ? "more / tickets" : "more";
+    const defaultLabel = "more";
 
     moreBtn.addEventListener("click", () => {
       extra.classList.toggle("hidden");
