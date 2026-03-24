@@ -207,15 +207,14 @@ card.innerHTML = `
       <div class="gig-text-wrapper">
 
         <div class="gig-main">
-          <div class="gig-date">${g.date}</div>
           <div class="gig-title"><strong>${g.title}</strong></div>
-          <div class="gig-venue">
-            ${g.venue}${g.extraInfo ? ", " + g.extraInfo : ""}
-          </div>
-          <div class="gig-time">${parseTime(g.time) || ""}</div>
+          <div class="gig-venue">${g.venue}</div>
         </div>
 
         <div class="gig-extra hidden">
+          ${g.date ? `<div class="gig-date">${g.date}</div>` : ""}
+          ${g.time ? `<div class="gig-time">${parseTime(g.time)}</div>` : ""}
+          ${g.extraInfo ? `<div>${g.extraInfo}</div>` : ""}
           ${g.extra && g.extra.trim() !== "" ? `<div>${g.extra}</div>` : ""}
           ${
             g.tickets && g.tickets.trim() !== ""
@@ -226,13 +225,12 @@ card.innerHTML = `
 
         <div class="gig-buttons">
           ${
+            g.date ||
+            g.time ||
+            g.extraInfo ||
             (g.extra && g.extra.trim() !== "") ||
             (g.tickets && g.tickets.trim() !== "")
-              ? `<button class="more-btn">${
-                  g.tickets && g.tickets.trim() !== ""
-                    ? "more / tickets"
-                    : "more"
-                }</button>`
+              ? `<button class="more-btn">more</button>`
               : ""
           }
         </div>
