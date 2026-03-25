@@ -109,11 +109,17 @@ function setupAreaButtons() {
 /* ---------------------------------------------
    VIEW TOGGLE
 --------------------------------------------- */
-function setupViewToggle() {
+<button class="view-cards-btn active">CARDS view</button>
+<button class="view-text-btn">TEXT view</button>
+  function setupViewToggle() {
   const cardsBtn = document.querySelector(".view-cards-btn");
   const textBtn = document.querySelector(".view-text-btn");
 
-  if (!cardsBtn || !textBtn) return; // safety check
+  // SAFETY CHECK: if elements don't exist yet, stop
+  if (!cardsBtn || !textBtn) {
+    console.warn("View toggle buttons not found yet.");
+    return;
+  }
 
   cardsBtn.addEventListener("click", () => {
     currentView = "cards";
