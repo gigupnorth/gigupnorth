@@ -37,373 +37,257 @@ const venueImages = {
   "Red": "https://gigupnorth.github.io/gigupnorth/images/red.jpg",
 };
 
+/* ---------------------------------------------
+   GLOBALS
+--------------------------------------------- */
+let gigs = [];             // All fetched gigs
+let lazyList = [];         // Filtered gigs for lazy loading
+let Index = 0;             // Current position in lazy load
+const CHUNK_SIZE = 40;     // How many gigs to render per scroll
+let lazyActive = false;    
+let scrollAttached = false;
+let lastRenderedDate = null;
+let currentAreaFilters = ["Darlo","Durham","Middlesbrough","Newcastle","Sunderland"];
+let currentView = "cards"; // "cards" or "text"
 
-let gigs = [];
-  const hiddenAreas = new Set();
 
-  /* ---------------------------------------------
-     LAZY  GLOBALS
-  --------------------------------------------- */
-  let lazyList = [];          // gigs currently being ed (after filters)
-  let Index = 0;        // where we are in the list
-  const CHUNK_SIZE = 40;      // tweak this if needed
-  let lazyActive = false;     // prevents double-triggering
-  let scrollAttached = false; // ensures only one scroll listener
-
+/* ---------------------------------------------
+   FETCH & INITIALIZE
+--------------------------------------------- */
 async function loadGigs() {
   const url = "https://script.google.com/macros/s/AKfycbwQai3AEldoeZlXj6PNjqWauaJn2vShdPDMcR3DeDz1DyEDh_tOJ7o152QHrvxF4oA4rw/exec";
 
-  // First attempt
   let res = await fetch(url);
 
-  // If Google Apps Script is still waking up, retry once after 1 second
   if (!res.ok) {
     await new Promise(r => setTimeout(r, 1000));
     res = await fetch(url);
   }
 
-
   const all = await res.json();
-gigs = all;
-  // Continue with your existing logic
+
   // Filter out past gigs
-const today = new Date();
-today.setHours(0,0,0,0);
+  const today = new Date();
+  today.setHours(0,0,0,0);
 
-gigs = all.filter(g => {
-  if (!g.date) return false;
-  const gigDate = parseGigDate(g.date);
-  return gigDate >= today;
-});
+  gigs = all.filter(g => {
+    if (!g.date) return false;
+    const gigDate = parseGigDate(g.date);
+    return gigDate >= today;
+  });
 
-// Start ing
-startLazy(gigs);
-Text(gigs);
+  // Sort by date ascending
+  gigs.sort((a,b) => new Date(a.date) - new Date(b.date));
 
-// If you have a venue menu function
-if (typeof buildVenueMenu === "function") {
-  buildVenueMenu();
+  // Initialize filters and view
+  applyFilters();
+  setupAreaButtons();
+  setupViewToggle();
 }
 
+
+/* ---------------------------------------------
+   PARSE DATE (from your API format)
+--------------------------------------------- */
+function parseGigDate(dateStr) {
+  return new Date(dateStr);
 }
 
 
+/* ---------------------------------------------
+   AREA FILTERS
+--------------------------------------------- */
+function setupAreaButtons() {
+  const keys = document.querySelectorAll(".area-key .key");
+  keys.forEach(key => {
+    key.addEventListener("click", () => {
+      const area = key.dataset.area;
+      if (currentAreaFilters.includes(area)) {
+        currentAreaFilters = currentAreaFilters.filter(a => a !== area);
+        key.classList.add("hidden-area");
+      } else {
+        currentAreaFilters.push(area);
+        key.classList.remove("hidden-area");
+      }
+      applyFilters();
+    });
+  });
+}
 
-  
+
+/* ---------------------------------------------
+   VIEW TOGGLE
+--------------------------------------------- */
+function setupViewToggle() {
+  document.querySelector(".view-cards-btn").addEventListener("click", () => {
+    currentView = "cards";
+    document.querySelector(".view-cards-btn").classList.add("active");
+    document.querySelector(".view-text-btn").classList.remove("active");
+    applyFilters();
+  });
+
+  document.querySelector(".view-text-btn").addEventListener("click", () => {
+    currentView = "text";
+    document.querySelector(".view-text-btn").classList.add("active");
+    document.querySelector(".view-cards-btn").classList.remove("active");
+    applyFilters();
+  });
+}
 
 
+/* ---------------------------------------------
+   APPLY FILTERS & INIT LAZY OR TEXT
+--------------------------------------------- */
+function applyFilters() {
+  // Filter gigs by selected areas
+  lazyList = gigs.filter(g => currentAreaFilters.includes(g.area));
 
+  // Reset lazy load index and date
+  Index = 0;
+  lastRenderedDate = null;
 
-  function parseTime(t) {
-    return t && t.startsWith("time-") ? t.replace("time-", "") : t;
-  }
+  const cardsContainer = document.getElementById("cards-view");
+  const textContainer = document.getElementById("text-view");
+  cardsContainer.innerHTML = "";
+  textContainer.innerHTML = "";
 
-  /* ---------------------------------------------
-     LAZY : START
-  --------------------------------------------- */
-  function startLazy(list) {
-    const container = document.getElementById("cards-view");
-    container.innerHTML = "";
-
-    lazyList = list;
-    Index = 0;
+  if (currentView === "cards") {
+    cardsContainer.style.display = "flex";
+    textContainer.style.display = "none";
     lazyActive = true;
-
     NextChunk();
-
     if (!scrollAttached) {
       window.addEventListener("scroll", handleLazyScroll);
       scrollAttached = true;
     }
+  } else {
+    cardsContainer.style.display = "none";
+    textContainer.style.display = "block";
+    renderTextView();
   }
+}
 
-  /* ---------------------------------------------
-     LAZY : CHUNK ING
-  --------------------------------------------- */
-  function NextChunk() {
-    if (!lazyActive) return;
 
-    const container = document.getElementById("cards-view");
-    const slice = lazyList.slice(Index, Index + CHUNK_SIZE);
-
-    slice.forEach(g => {
-      const card = buildCard(g);
-      container.appendChild(card);
-    });
-
-    Index += CHUNK_SIZE;
-
-    filterCardsByArea();
-
- if (Index >= lazyList.length) {
-
-      lazyActive = false;
-    }
-  }
-
-  /* ---------------------------------------------
-     LAZY RENDER: SCROLL TRIGGER
-  --------------------------------------------- */
+/* ---------------------------------------------
+   LAZY SCROLL HANDLER
+--------------------------------------------- */
 function handleLazyScroll() {
   if (!lazyActive) return;
 
-  const scrollPos = window.innerHeight + window.scrollY;
-  const threshold = document.body.offsetHeight - 800;
+  const scrollPosition = window.scrollY + window.innerHeight;
+  const container = document.getElementById("cards-view");
+  const threshold = container.offsetTop + container.offsetHeight - 200;
 
-  if (scrollPos > threshold) {
+  if (scrollPosition >= threshold) {
     NextChunk();
   }
 }
 
 
+/* ---------------------------------------------
+   LAZY RENDER NEXT CHUNK
+--------------------------------------------- */
+function NextChunk() {
+  if (!lazyActive) return;
 
-  /* ---------------------------------------------
-     CARD BUILDER (unchanged except extracted)
-  --------------------------------------------- */
+  const container = document.getElementById("cards-view");
+  const slice = lazyList.slice(Index, Index + CHUNK_SIZE);
 
+  slice.forEach(g => {
+    const thisDate = g.date;
+
+    // Insert date header if new
+    if (thisDate !== lastRenderedDate) {
+      const header = document.createElement("div");
+      header.className = "gig-date-header sticky"; // sticky class added
+      header.textContent = formatDateHeading(thisDate);
+      container.appendChild(header);
+      lastRenderedDate = thisDate;
+    }
+
+    const card = buildCard(g);
+    container.appendChild(card);
+  });
+
+  Index += CHUNK_SIZE;
+
+  if (Index >= lazyList.length) {
+    lazyActive = false;
+  }
+}
+
+
+/* ---------------------------------------------
+   CREATE A GIG CARD
+--------------------------------------------- */
 function buildCard(g) {
-  console.log("VENUE:", g.venue);
-
-  const card = document.createElement("article");
+  const card = document.createElement("div");
   card.className = "gig-card";
-// Apply the colour from Column J to the wrapper
-card.style.setProperty("--gig-colour", g.colour || "#ffffff");
+  card.dataset.colour = g.colour || "blue";
 
-  /* ---------------------------------------------
-     IMAGE OVERRIDE LOGIC
-  --------------------------------------------- */
-  const overrideImg = g.imageOverride && g.imageOverride.trim();
-  const venueImg = venueImages[g.venue] || "";
-  const finalImg = overrideImg || venueImg;
+  const inner = document.createElement("div");
+  inner.className = "gig-card-inner";
 
-  /* ---------------------------------------------
-     COLOUR + AREA TAGGING
-  --------------------------------------------- */
-  const colour = (g.colour || "black").toString().trim().toLowerCase();
-  card.dataset.colour = colour;
+  // LEFT SIDE TEXT
+  const textWrapper = document.createElement("div");
+  textWrapper.className = "gig-card-text gig-text-wrapper";
+  textWrapper.innerHTML = `
+    <div class="gig-title"><strong>${g.title}</strong></div>
+    <div class="gig-venue">${g.venue}</div>
+    <div class="gig-time">${g.time || ""}</div>
+    <div class="gig-price">${g.price || ""}</div>
+  `;
 
-  const colourToArea = {
-    blue: "Darlo",
-    green: "Durham",
-    orange: "Middlesbrough",
-    black: "Newcastle",
-    red: "Sunderland"
-  };
+  // RIGHT SIDE IMAGE
+  const imgDiv = document.createElement("div");
+  imgDiv.className = "gig-card-image";
+  imgDiv.style.backgroundImage = `url('${g.image || "images/placeholder.png"}')`;
 
-  card.dataset.area = colourToArea[colour] || "";
+  inner.appendChild(textWrapper);
+  inner.appendChild(imgDiv);
+  card.appendChild(inner);
 
-  const mainArea = card.dataset.area;
-  const subArea = g.subarea && g.subarea.trim() !== "" ? g.subarea.trim() : "";
-  const fullArea = subArea ? `${mainArea}, ${subArea}` : mainArea;
-
-  /* ---------------------------------------------
-     NEW TWO-COLUMN CARD LAYOUT
-  --------------------------------------------- */
-card.innerHTML = `
-  <div class="gig-card-inner">
-
-    <!-- LEFT SIDE: TEXT -->
-    <div class="gig-card-text">
-      <div class="gig-text-wrapper">
-
-        <div class="gig-main">
-          <div class="gig-title"><strong>${g.title}</strong></div>
-          <div class="gig-venue">${g.venue}</div>
-        </div>
-
-        <div class="gig-extra hidden">
-          ${g.date ? `<div class="gig-date">${g.date}</div>` : ""}
-          ${g.time ? `<div class="gig-time">${parseTime(g.time)}</div>` : ""}
-          ${g.extraInfo ? `<div>${g.extraInfo}</div>` : ""}
-          ${g.extra && g.extra.trim() !== "" ? `<div>${g.extra}</div>` : ""}
-          ${
-            g.tickets && g.tickets.trim() !== ""
-              ? `<div><a href="${g.tickets}" target="_blank">Tickets link</a></div>`
-              : ""
-          }
-        </div>
-
-        <div class="gig-buttons">
-          ${
-            g.date ||
-            g.time ||
-            g.extraInfo ||
-            (g.extra && g.extra.trim() !== "") ||
-            (g.tickets && g.tickets.trim() !== "")
-              ? `<button class="more-btn">more</button>`
-              : ""
-          }
-        </div>
-
-      </div> <!-- end gig-text-wrapper -->
-    </div>
-
-    <!-- RIGHT SIDE: IMAGE -->
-    <div class="gig-card-image"></div>
-
-  </div>
-`;
-
-
-  /* ---------------------------------------------
-     APPLY IMAGE WITH FALLBACK (CORRECT PLACE)
-  --------------------------------------------- */
-  const imgDiv = card.querySelector(".gig-card-image");
-  const testImg = new Image();
-
-  testImg.onload = () => {
-    imgDiv.style.backgroundImage = `url("${finalImg}")`;
-  };
-
-  testImg.onerror = () => {
-    imgDiv.style.backgroundImage = `url("${venueImg}")`;
-  };
-
-  testImg.src = finalImg || venueImg;
-
-  /* ---------------------------------------------
-     MORE BUTTON LOGIC
-  --------------------------------------------- */
-  const moreBtn = card.querySelector(".more-btn");
-  const extra = card.querySelector(".gig-extra");
-
-  if (moreBtn) {
-    const defaultLabel = "more";
-
-    moreBtn.addEventListener("click", () => {
-      extra.classList.toggle("hidden");
-      moreBtn.textContent = extra.classList.contains("hidden")
-        ? defaultLabel
-        : "less";
+  // Optional "more" button
+  if (g.extra) {
+    const btn = document.createElement("button");
+    btn.className = "more-btn";
+    btn.textContent = "more";
+    btn.addEventListener("click", () => {
+      alert(g.extra); // simple way; can be replaced with your expanded info
     });
+    textWrapper.appendChild(btn);
   }
 
   return card;
 }
 
 
-
-  /* ---------------------------------------------
-     AREA FILTERING
-  --------------------------------------------- */
-  function filterCardsByArea() {
-    document.querySelectorAll("#cards-view .gig-card").forEach(card => {
-      const area = card.dataset.area;
-      card.style.display = hiddenAreas.has(area) ? "none" : "";
-    });
-  }
-
-  /* ---------------------------------------------
-     TEXT VIEW
-  --------------------------------------------- */
- function escapeHTML(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-
-function renderText(list = gigs) {
+/* ---------------------------------------------
+   TEXT VIEW
+--------------------------------------------- */
+function renderTextView() {
   const container = document.getElementById("text-view");
+  container.innerHTML = lazyList
+    .map(g => `${g.date} - ${g.title} @ ${g.venue}`)
+    .join("\n");
+}
 
-  let lastDate = "";
-  let lines = [];
 
-  list.forEach(g => {
-    const t = parseTime(g.time);
-
-    // DATE HEADER (plain text)
-    if (g.date !== lastDate) {
-      lines.push(`=== ${escapeHTML(g.date)} ===`);
-      lastDate = g.date;
-    }
-
-    // TITLE + TIME + EXTRA (plain text)
-    let line = `${escapeHTML(g.title)}`;
-    if (t) line += ` — ${escapeHTML(t)}`;
-    if (g.extra) line += ` — ${escapeHTML(g.extra)}`;
-    lines.push(line);
-
-    // VENUE (plain text)
-    lines.push(`${escapeHTML(g.venue)}`);
-
-    // Blank line
-    lines.push("");
+/* ---------------------------------------------
+   DATE FORMATTER
+--------------------------------------------- */
+function formatDateHeading(dateStr) {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   });
-
-  container.innerHTML = lines.join("<br>");
 }
 
 
-  function getVisibleGigs() {
-    return gigs.filter(g => {
-      const colour = (g.colour || "black").toString().trim().toLowerCase();
-      const area = {
-        blue: "Darlo",
-        green: "Durham",
-        orange: "Middlesbrough",
-        black: "Newcastle",
-        red: "Sunderland"
-      }[colour] || "";
-
-      return !hiddenAreas.has(area);
-    });
-  }
-
-  /* ---------------------------------------------
-     VIEW TOGGLES
-  --------------------------------------------- */
-function showCards() {
-  document.getElementById("cards-view").style.display = "grid";
-  document.getElementById("text-view").style.display = "none";
-
-  document.querySelectorAll(".view-cards-btn").forEach(btn => btn.classList.add("active"));
-  document.querySelectorAll(".view-text-btn").forEach(btn => btn.classList.remove("active"));
-startLazy(getVisibleGigs());
-
-}
-
-function showText() {
-  document.getElementById("cards-view").style.display = "none";
-  document.getElementById("text-view").style.display = "block";
-
-  document.querySelectorAll(".view-cards-btn").forEach(btn => btn.classList.remove("active"));
-  document.querySelectorAll(".view-text-btn").forEach(btn => btn.classList.add("active"));
-
-  renderText(getVisibleGigs());
-}
-
-
-  /* ---------------------------------------------
-     AREA BUTTONS
-  --------------------------------------------- */
-  document.querySelectorAll(".area-key .key").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const area = btn.dataset.area;
-
-      if (hiddenAreas.has(area)) {
-        hiddenAreas.delete(area);
-        btn.querySelector("small").textContent = "(showing)";
-        btn.classList.remove("hidden-area");
-      } else {
-        hiddenAreas.add(area);
-        btn.querySelector("small").textContent = "(hidden)";
-        btn.classList.add("hidden-area");
-      }
-
-      startLazy(getVisibleGigs());
-
-      renderText(getVisibleGigs());
-    });
-  });
-function parseGigDate(dateStr) {
-  if (!dateStr) return null;
-
-  // Remove weekday (e.g. "Thu ")
-  const cleaned = dateStr.replace(/^[A-Za-z]{3}\s/, "");
-
-  // Now cleaned looks like "29 Jan 2026"
-  return new Date(cleaned);
-}
-
-  loadGigs();
+/* ---------------------------------------------
+   INITIALIZE
+--------------------------------------------- */
+window.addEventListener("DOMContentLoaded", loadGigs);
