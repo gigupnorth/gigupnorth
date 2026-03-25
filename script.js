@@ -41,16 +41,15 @@ const venueImages = {
    GLOBALS
 --------------------------------------------- */
 let gigs = [];             // All fetched gigs
-let lazyList = [];         // Filtered gigs for lazy loading
+let lazyList = [];         // Array of {date, gigs[]} for lazy loading
 let Index = 0;             // Current position in lazy load
-const CHUNK_SIZE = 40;     // How many gigs to render per scroll
+const CHUNK_SIZE = 3;      // Number of dates to render per lazy chunk (adjust as needed)
 let lazyActive = false;    
 let scrollAttached = false;
-let lastRenderedDate = null;
 let currentAreaFilters = ["Darlo","Durham","Middlesbrough","Newcastle","Sunderland"];
 let currentView = "cards"; // "cards" or "text"
 
-// Define the colour order for each day
+// Colour order for each day
 const colourOrder = ["blue","green","orange","black","red"];
 
 
@@ -61,7 +60,6 @@ async function loadGigs() {
   const url = "https://script.google.com/macros/s/AKfycbwQai3AEldoeZlXj6PNjqWauaJn2vShdPDMcR3DeDz1DyEDh_tOJ7o152QHrvxF4oA4rw/exec";
 
   let res = await fetch(url);
-
   if (!res.ok) {
     await new Promise(r => setTimeout(r, 1000));
     res = await fetch(url);
@@ -72,28 +70,15 @@ async function loadGigs() {
   // Filter out past gigs
   const today = new Date();
   today.setHours(0,0,0,0);
+  gigs = all.filter(g => g.date && new Date(g.date) >= today);
 
-  gigs = all.filter(g => {
-    if (!g.date) return false;
-    const gigDate = parseGigDate(g.date);
-    return gigDate >= today;
-  });
-
-  // Sort by date ascending
+  // Sort gigs by date ascending
   gigs.sort((a,b) => new Date(a.date) - new Date(b.date));
 
-  // Initialize filters and view
+  // Initialize
   applyFilters();
   setupAreaButtons();
   setupViewToggle();
-}
-
-
-/* ---------------------------------------------
-   PARSE DATE
---------------------------------------------- */
-function parseGigDate(dateStr) {
-  return new Date(dateStr);
 }
 
 
@@ -139,16 +124,28 @@ function setupViewToggle() {
 
 
 /* ---------------------------------------------
-   APPLY FILTERS & INIT LAZY OR TEXT
+   APPLY FILTERS & PREP LAZY LIST
 --------------------------------------------- */
 function applyFilters() {
   // Filter gigs by selected areas
-  lazyList = gigs.filter(g => currentAreaFilters.includes(g.area));
+  const filtered = gigs.filter(g => currentAreaFilters.includes(g.area));
 
-  // Reset lazy load index and date
+  // Group gigs by date
+  const grouped = {};
+  filtered.forEach(g => {
+    if (!grouped[g.date]) grouped[g.date] = [];
+    grouped[g.date].push(g);
+  });
+
+  // Convert grouped object into sorted array [{date, gigs[]}, ...]
+  lazyList = Object.keys(grouped)
+                  .sort((a,b) => new Date(a) - new Date(b))
+                  .map(d => ({ date: d, gigs: grouped[d] }));
+
   Index = 0;
-  lastRenderedDate = null;
+  lazyActive = true;
 
+  // Clear containers
   const cardsContainer = document.getElementById("cards-view");
   const textContainer = document.getElementById("text-view");
   cardsContainer.innerHTML = "";
@@ -157,7 +154,6 @@ function applyFilters() {
   if (currentView === "cards") {
     cardsContainer.style.display = "flex";
     textContainer.style.display = "none";
-    lazyActive = true;
     NextChunk();
     if (!scrollAttached) {
       window.addEventListener("scroll", handleLazyScroll);
@@ -176,67 +172,46 @@ function applyFilters() {
 --------------------------------------------- */
 function handleLazyScroll() {
   if (!lazyActive) return;
-
   const scrollPosition = window.scrollY + window.innerHeight;
   const container = document.getElementById("cards-view");
   const threshold = container.offsetTop + container.offsetHeight - 200;
-
-  if (scrollPosition >= threshold) {
-    NextChunk();
-  }
+  if (scrollPosition >= threshold) NextChunk();
 }
 
 
 /* ---------------------------------------------
-   LAZY RENDER NEXT CHUNK
+   NEXT CHUNK RENDER
 --------------------------------------------- */
 function NextChunk() {
   if (!lazyActive) return;
-
   const container = document.getElementById("cards-view");
+
+  // Take next CHUNK_SIZE dates
   const slice = lazyList.slice(Index, Index + CHUNK_SIZE);
 
-  // Group slice by date
-  const gigsByDate = {};
-  slice.forEach(g => {
-    if (!gigsByDate[g.date]) gigsByDate[g.date] = [];
-    gigsByDate[g.date].push(g);
-  });
+  slice.forEach(day => {
+    const dateStr = day.date;
 
-  Object.keys(gigsByDate).forEach(dateStr => {
-    const dayGigs = gigsByDate[dateStr];
+    // Insert date header
+    const header = document.createElement("div");
+    header.className = "gig-date-header sticky";
+    header.textContent = formatDateHeading(dateStr);
+    container.appendChild(header);
 
     // Sort gigs by colour order
-    dayGigs.sort((a,b) => {
-      return colourOrder.indexOf(a.colour || "blue") - colourOrder.indexOf(b.colour || "blue");
-    });
+    day.gigs.sort((a,b) => colourOrder.indexOf(a.colour||"blue") - colourOrder.indexOf(b.colour||"blue"));
 
-    // Insert date header if new
-    if (dateStr !== lastRenderedDate) {
-      const header = document.createElement("div");
-      header.className = "gig-date-header sticky"; // sticky header
-      header.textContent = formatDateHeading(dateStr);
-      container.appendChild(header);
-      lastRenderedDate = dateStr;
-    }
-
-    // Append cards
-    dayGigs.forEach(g => {
-      const card = buildCard(g);
-      container.appendChild(card);
-    });
+    // Append each card
+    day.gigs.forEach(g => container.appendChild(buildCard(g)));
   });
 
   Index += CHUNK_SIZE;
-
-  if (Index >= lazyList.length) {
-    lazyActive = false;
-  }
+  if (Index >= lazyList.length) lazyActive = false;
 }
 
 
 /* ---------------------------------------------
-   CREATE A GIG CARD
+   CREATE CARD
 --------------------------------------------- */
 function buildCard(g) {
   const card = document.createElement("div");
@@ -246,7 +221,7 @@ function buildCard(g) {
   const inner = document.createElement("div");
   inner.className = "gig-card-inner";
 
-  // LEFT SIDE TEXT
+  // LEFT TEXT
   const textWrapper = document.createElement("div");
   textWrapper.className = "gig-card-text gig-text-wrapper";
   textWrapper.innerHTML = `
@@ -256,7 +231,7 @@ function buildCard(g) {
     <div class="gig-price">${g.price || ""}</div>
   `;
 
-  // RIGHT SIDE IMAGE
+  // RIGHT IMAGE
   const imgDiv = document.createElement("div");
   imgDiv.className = "gig-card-image";
   imgDiv.style.backgroundImage = `url('${g.image || "images/placeholder.png"}')`;
@@ -270,9 +245,7 @@ function buildCard(g) {
     const btn = document.createElement("button");
     btn.className = "more-btn";
     btn.textContent = "more";
-    btn.addEventListener("click", () => {
-      alert(g.extra); // simple way; can be replaced with expanded info popup
-    });
+    btn.addEventListener("click", () => alert(g.extra));
     textWrapper.appendChild(btn);
   }
 
@@ -285,28 +258,20 @@ function buildCard(g) {
 --------------------------------------------- */
 function renderTextView() {
   const container = document.getElementById("text-view");
-
-  // Group text view by date
-  const grouped = {};
-  lazyList.forEach(g => {
-    if (!grouped[g.date]) grouped[g.date] = [];
-    grouped[g.date].push(g);
-  });
-
   container.innerHTML = "";
 
-  Object.keys(grouped).forEach(dateStr => {
+  lazyList.forEach(day => {
     const header = document.createElement("div");
     header.className = "gig-date-header";
-    header.textContent = formatDateHeading(dateStr);
+    header.textContent = formatDateHeading(day.date);
     container.appendChild(header);
 
     // Sort by colour order
-    grouped[dateStr].sort((a,b) => colourOrder.indexOf(a.colour || "blue") - colourOrder.indexOf(b.colour || "blue"));
+    day.gigs.sort((a,b) => colourOrder.indexOf(a.colour||"blue") - colourOrder.indexOf(b.colour||"blue"));
 
-    grouped[dateStr].forEach(g => {
+    day.gigs.forEach(g => {
       const div = document.createElement("div");
-      div.textContent = `${g.title} @ ${g.venue} ${g.time || ""} ${g.price || ""}`;
+      div.textContent = `${g.title} @ ${g.venue} ${g.time||""} ${g.price||""}`;
       container.appendChild(div);
     });
   });
