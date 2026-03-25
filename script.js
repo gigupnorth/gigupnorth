@@ -40,11 +40,11 @@ const venueImages = {
 /* ---------------------------------------------
    GLOBALS
 --------------------------------------------- */
-let gigs = [];             // All fetched gigs
-let lazyList = [];         // Array of {date, gigs[]} for lazy loading
-let Index = 0;             // Current position in lazy load
-const CHUNK_SIZE = 3;      // Number of dates to render per lazy chunk
-let lazyActive = false;    
+let gigs = [];             // All gigs
+let lazyList = [];         // [{date, gigs[]}, ...] for lazy rendering
+let Index = 0;             // Lazy load index
+const CHUNK_SIZE = 3;      // Number of dates to load per scroll
+let lazyActive = false;
 let scrollAttached = false;
 let currentAreaFilters = ["Darlo","Durham","Middlesbrough","Newcastle","Sunderland"];
 let currentView = "cards"; // "cards" or "text"
@@ -52,19 +52,20 @@ let currentView = "cards"; // "cards" or "text"
 // Colour order for each day
 const colourOrder = ["blue","green","orange","black","red"];
 
-
 /* ---------------------------------------------
    FETCH & INITIALIZE
 --------------------------------------------- */
 async function loadGigs() {
+  const fallbackGigs = [
+    {title:"Sample Blue Gig", venue:"Venue A", date: new Date().toISOString().slice(0,10), time:"20:00", price:"£10", area:"Darlo", colour:"blue"},
+    {title:"Sample Green Gig", venue:"Venue B", date: new Date().toISOString().slice(0,10), time:"21:00", price:"£12", area:"Durham", colour:"green"},
+    {title:"Sample Orange Gig", venue:"Venue C", date: new Date(new Date().setDate(new Date().getDate()+1)).toISOString().slice(0,10), time:"19:30", price:"£15", area:"Middlesbrough", colour:"orange"}
+  ];
+
   try {
     const url = "https://script.google.com/macros/s/AKfycbwQai3AEldoeZlXj6PNjqWauaJn2vShdPDMcR3DeDz1DyEDh_tOJ7o152QHrvxF4oA4rw/exec";
     let res = await fetch(url);
-    if (!res.ok) {
-      await new Promise(r => setTimeout(r, 1000));
-      res = await fetch(url);
-    }
-
+    if (!res.ok) throw new Error("Fetch failed");
     const all = await res.json();
 
     // Filter out past gigs
@@ -72,18 +73,18 @@ async function loadGigs() {
     today.setHours(0,0,0,0);
     gigs = all.filter(g => g.date && new Date(g.date) >= today);
 
-    // Sort gigs by date ascending
-    gigs.sort((a,b) => new Date(a.date) - new Date(b.date));
-
-    // Initialize filters, view, and buttons
-    setupAreaButtons();
-    setupViewToggle();
-    applyFilters();
+    // Sort by date ascending
+    gigs.sort((a,b)=>new Date(a.date)-new Date(b.date));
+    if (!gigs.length) gigs = fallbackGigs; // fallback if fetch returns empty
   } catch(e) {
-    console.error("Failed to load gigs:", e);
+    console.warn("Fetch failed, using fallback gigs:", e);
+    gigs = fallbackGigs;
   }
-}
 
+  setupAreaButtons();
+  setupViewToggle();
+  applyFilters();
+}
 
 /* ---------------------------------------------
    AREA FILTERS
@@ -94,7 +95,7 @@ function setupAreaButtons() {
     key.addEventListener("click", () => {
       const area = key.dataset.area;
       if (currentAreaFilters.includes(area)) {
-        currentAreaFilters = currentAreaFilters.filter(a => a !== area);
+        currentAreaFilters = currentAreaFilters.filter(a=>a!==area);
         key.classList.add("hidden-area");
       } else {
         currentAreaFilters.push(area);
@@ -105,21 +106,13 @@ function setupAreaButtons() {
   });
 }
 
-
 /* ---------------------------------------------
    VIEW TOGGLE
 --------------------------------------------- */
-<button class="view-cards-btn active">CARDS view</button>
-<button class="view-text-btn">TEXT view</button>
-  function setupViewToggle() {
+function setupViewToggle() {
   const cardsBtn = document.querySelector(".view-cards-btn");
   const textBtn = document.querySelector(".view-text-btn");
-
-  // SAFETY CHECK: if elements don't exist yet, stop
-  if (!cardsBtn || !textBtn) {
-    console.warn("View toggle buttons not found yet.");
-    return;
-  }
+  if (!cardsBtn || !textBtn) return;
 
   cardsBtn.addEventListener("click", () => {
     currentView = "cards";
@@ -136,178 +129,151 @@ function setupAreaButtons() {
   });
 }
 
-
 /* ---------------------------------------------
-   APPLY FILTERS & PREP LAZY LIST
+   APPLY FILTERS & LAZY LIST PREP
 --------------------------------------------- */
 function applyFilters() {
-  // Filter gigs by selected areas
   const filtered = gigs.filter(g => currentAreaFilters.includes(g.area));
 
-  // Group gigs by date
   const grouped = {};
-  filtered.forEach(g => {
-    if (!grouped[g.date]) grouped[g.date] = [];
+  filtered.forEach(g=>{
+    if(!grouped[g.date]) grouped[g.date]=[];
     grouped[g.date].push(g);
   });
 
-  // Convert grouped object into sorted array [{date, gigs[]}, ...]
   lazyList = Object.keys(grouped)
-                  .sort((a,b) => new Date(a) - new Date(b))
-                  .map(d => ({ date: d, gigs: grouped[d] }));
+                 .sort((a,b)=>new Date(a)-new Date(b))
+                 .map(d=>({date:d, gigs:grouped[d]}));
 
   Index = 0;
   lazyActive = true;
 
-  // Clear containers
   const cardsContainer = document.getElementById("cards-view");
   const textContainer = document.getElementById("text-view");
-  if (cardsContainer) cardsContainer.innerHTML = "";
-  if (textContainer) textContainer.innerHTML = "";
+  if(cardsContainer) cardsContainer.innerHTML="";
+  if(textContainer) textContainer.innerHTML="";
 
-  if (currentView === "cards") {
-    if (cardsContainer) cardsContainer.style.display = "flex";
-    if (textContainer) textContainer.style.display = "none";
+  if(currentView==="cards"){
+    if(cardsContainer) cardsContainer.style.display="flex";
+    if(textContainer) textContainer.style.display="none";
     NextChunk();
-    if (!scrollAttached) {
+    if(!scrollAttached){
       window.addEventListener("scroll", handleLazyScroll);
-      scrollAttached = true;
+      scrollAttached=true;
     }
   } else {
-    if (cardsContainer) cardsContainer.style.display = "none";
-    if (textContainer) textContainer.style.display = "block";
+    if(cardsContainer) cardsContainer.style.display="none";
+    if(textContainer) textContainer.style.display="block";
     renderTextView();
   }
 }
 
-
 /* ---------------------------------------------
-   LAZY SCROLL HANDLER
+   LAZY SCROLL
 --------------------------------------------- */
-function handleLazyScroll() {
-  if (!lazyActive) return;
-  const scrollPosition = window.scrollY + window.innerHeight;
+function handleLazyScroll(){
+  if(!lazyActive) return;
   const container = document.getElementById("cards-view");
-  if (!container) return;
-  const threshold = container.offsetTop + container.offsetHeight - 200;
-  if (scrollPosition >= threshold) NextChunk();
+  if(!container) return;
+  const scrollPos = window.scrollY+window.innerHeight;
+  const threshold = container.offsetTop+container.offsetHeight-200;
+  if(scrollPos>=threshold) NextChunk();
 }
 
-
 /* ---------------------------------------------
-   NEXT CHUNK RENDER
+   NEXT CHUNK
 --------------------------------------------- */
-function NextChunk() {
-  if (!lazyActive) return;
+function NextChunk(){
+  if(!lazyActive) return;
   const container = document.getElementById("cards-view");
-  if (!container) return;
+  if(!container) return;
 
-  // Take next CHUNK_SIZE dates
-  const slice = lazyList.slice(Index, Index + CHUNK_SIZE);
-
-  slice.forEach(day => {
-    const dateStr = day.date;
-
-    // Insert date header
+  const slice = lazyList.slice(Index, Index+CHUNK_SIZE);
+  slice.forEach(day=>{
     const header = document.createElement("div");
-    header.className = "gig-date-header sticky";
-    header.textContent = formatDateHeading(dateStr);
+    header.className="gig-date-header sticky";
+    header.textContent=formatDateHeading(day.date);
     container.appendChild(header);
 
-    // Sort gigs by colour order
-    day.gigs.sort((a,b) => colourOrder.indexOf(a.colour||"blue") - colourOrder.indexOf(b.colour||"blue"));
-
-    // Append each card
-    day.gigs.forEach(g => container.appendChild(buildCard(g)));
+    // sort by colour
+    day.gigs.sort((a,b)=>colourOrder.indexOf(a.colour||"blue")-colourOrder.indexOf(b.colour||"blue"));
+    day.gigs.forEach(g=>container.appendChild(buildCard(g)));
   });
 
-  Index += CHUNK_SIZE;
-  if (Index >= lazyList.length) lazyActive = false;
+  Index+=CHUNK_SIZE;
+  if(Index>=lazyList.length) lazyActive=false;
 }
 
-
 /* ---------------------------------------------
-   CREATE CARD
+   BUILD CARD
 --------------------------------------------- */
-function buildCard(g) {
+function buildCard(g){
   const card = document.createElement("div");
-  card.className = "gig-card";
-  card.dataset.colour = g.colour || "blue";
+  card.className="gig-card";
+  card.dataset.colour=g.colour||"blue";
 
-  const inner = document.createElement("div");
-  inner.className = "gig-card-inner";
+  const inner=document.createElement("div");
+  inner.className="gig-card-inner";
 
-  // LEFT TEXT
-  const textWrapper = document.createElement("div");
-  textWrapper.className = "gig-card-text gig-text-wrapper";
-  textWrapper.innerHTML = `
+  const textWrapper=document.createElement("div");
+  textWrapper.className="gig-card-text gig-text-wrapper";
+  textWrapper.innerHTML=`
     <div class="gig-title"><strong>${g.title}</strong></div>
     <div class="gig-venue">${g.venue}</div>
-    <div class="gig-time">${g.time || ""}</div>
-    <div class="gig-price">${g.price || ""}</div>
+    <div class="gig-time">${g.time||""}</div>
+    <div class="gig-price">${g.price||""}</div>
   `;
 
-  // RIGHT IMAGE
-  const imgDiv = document.createElement("div");
-  imgDiv.className = "gig-card-image";
-  imgDiv.style.backgroundImage = `url('${g.image || "images/placeholder.png"}')`;
+  const imgDiv=document.createElement("div");
+  imgDiv.className="gig-card-image";
+  imgDiv.style.backgroundImage=`url('${g.image||"images/placeholder.png"}')`;
 
   inner.appendChild(textWrapper);
   inner.appendChild(imgDiv);
   card.appendChild(inner);
 
-  // Optional "more" button
-  if (g.extra) {
-    const btn = document.createElement("button");
-    btn.className = "more-btn";
-    btn.textContent = "more";
-    btn.addEventListener("click", () => alert(g.extra));
+  if(g.extra){
+    const btn=document.createElement("button");
+    btn.className="more-btn";
+    btn.textContent="more";
+    btn.addEventListener("click", ()=>alert(g.extra));
     textWrapper.appendChild(btn);
   }
 
   return card;
 }
 
-
 /* ---------------------------------------------
    TEXT VIEW
 --------------------------------------------- */
-function renderTextView() {
-  const container = document.getElementById("text-view");
-  if (!container) return;
-  container.innerHTML = "";
-
-  lazyList.forEach(day => {
-    const header = document.createElement("div");
-    header.className = "gig-date-header";
-    header.textContent = formatDateHeading(day.date);
+function renderTextView(){
+  const container=document.getElementById("text-view");
+  if(!container) return;
+  container.innerHTML="";
+  lazyList.forEach(day=>{
+    const header=document.createElement("div");
+    header.className="gig-date-header";
+    header.textContent=formatDateHeading(day.date);
     container.appendChild(header);
 
-    // Sort by colour order
-    day.gigs.sort((a,b) => colourOrder.indexOf(a.colour||"blue") - colourOrder.indexOf(b.colour||"blue"));
-
-    day.gigs.forEach(g => {
-      const div = document.createElement("div");
-      div.textContent = `${g.title} @ ${g.venue} ${g.time||""} ${g.price||""}`;
+    day.gigs.sort((a,b)=>colourOrder.indexOf(a.colour||"blue")-colourOrder.indexOf(b.colour||"blue"));
+    day.gigs.forEach(g=>{
+      const div=document.createElement("div");
+      div.textContent=`${g.title} @ ${g.venue} ${g.time||""} ${g.price||""}`;
       container.appendChild(div);
     });
   });
 }
 
-
 /* ---------------------------------------------
    DATE FORMATTER
 --------------------------------------------- */
-function formatDateHeading(dateStr) {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
+function formatDateHeading(dateStr){
+  const date=new Date(dateStr);
+  return date.toLocaleDateString("en-GB",{
+    weekday:"long", day:"numeric", month:"long", year:"numeric"
   });
 }
-
 
 /* ---------------------------------------------
    INITIALIZE
