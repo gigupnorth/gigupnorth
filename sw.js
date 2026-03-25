@@ -6,8 +6,8 @@ const STATIC_ASSETS = [
   "/gigupnorth/index.html",
   "/gigupnorth/style.css",
   "/gigupnorth/script.js",
-  "/gigupnorth/icons/icon-192.png",
-  "/gigupnorth/icons/icon-512.png",
+  "/gigupnorth/icons/gun logo app.png",
+  "/gigupnorth/icons/gun logo app.png",
   "/gigupnorth/manifest.json"
 ];
 
