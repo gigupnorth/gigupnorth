@@ -1,20 +1,26 @@
 const CACHE_NAME = "gigupnorth-static-v1";
-
-// Only cache static assets — never your dynamic gig data
 const STATIC_ASSETS = [
   "/gigupnorth/",
   "/gigupnorth/index.html",
   "/gigupnorth/style.css",
   "/gigupnorth/script.js",
   "/gigupnorth/icons/gun logo app.png",
-  "/gigupnorth/icons/gun logo app.png",
   "/gigupnorth/manifest.json"
 ];
 
-// Install: cache static files
+// Install: cache static files safely
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      for (const asset of STATIC_ASSETS) {
+        try {
+          await cache.add(asset);
+        } catch(e) {
+          console.warn("Failed to cache:", asset, e);
+        }
+      }
+    })()
   );
   self.skipWaiting();
 });
@@ -33,12 +39,11 @@ self.addEventListener("activate", event => {
   self.clients.claim();
 });
 
-// Fetch: static files from cache, everything else from network
+// Fetch: serve cached static files, network fallback for everything else
 self.addEventListener("fetch", event => {
   const url = new URL(event.request.url);
 
-  // Only intercept requests inside your GitHub Pages folder
-  const isStatic = STATIC_ASSETS.some(asset => url.pathname === asset);
+  const isStatic = STATIC_ASSETS.some(asset => url.href.endsWith(asset));
 
   if (isStatic) {
     event.respondWith(
