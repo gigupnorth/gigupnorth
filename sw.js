@@ -4,7 +4,7 @@ const STATIC_ASSETS = [
   "/gigupnorth/index.html",
   "/gigupnorth/style.css",
   "/gigupnorth/script.js",
-  "/gigupnorth/icons/gunlogoapp.png",
+  "/gigupnorth/icons/icon-192.png",
   "/gigupnorth/manifest.json"
 ];
 
