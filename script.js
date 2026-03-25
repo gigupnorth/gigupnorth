@@ -43,7 +43,7 @@ const venueImages = {
 let gigs = [];             // All fetched gigs
 let lazyList = [];         // Array of {date, gigs[]} for lazy loading
 let Index = 0;             // Current position in lazy load
-const CHUNK_SIZE = 3;      // Number of dates to render per lazy chunk (adjust as needed)
+const CHUNK_SIZE = 3;      // Number of dates to render per lazy chunk
 let lazyActive = false;    
 let scrollAttached = false;
 let currentAreaFilters = ["Darlo","Durham","Middlesbrough","Newcastle","Sunderland"];
@@ -75,10 +75,10 @@ async function loadGigs() {
   // Sort gigs by date ascending
   gigs.sort((a,b) => new Date(a.date) - new Date(b.date));
 
-  // Initialize
-  applyFilters();
+  // Initialize filters, view, and buttons
   setupAreaButtons();
   setupViewToggle();
+  applyFilters();
 }
 
 
@@ -107,17 +107,21 @@ function setupAreaButtons() {
    VIEW TOGGLE
 --------------------------------------------- */
 function setupViewToggle() {
-  document.querySelector(".view-cards-btn").addEventListener("click", () => {
+  const cardsBtn = document.querySelector(".view-cards-btn");
+  const textBtn = document.querySelector(".view-text-btn");
+  if (!cardsBtn || !textBtn) return; // safety check
+
+  cardsBtn.addEventListener("click", () => {
     currentView = "cards";
-    document.querySelector(".view-cards-btn").classList.add("active");
-    document.querySelector(".view-text-btn").classList.remove("active");
+    cardsBtn.classList.add("active");
+    textBtn.classList.remove("active");
     applyFilters();
   });
 
-  document.querySelector(".view-text-btn").addEventListener("click", () => {
+  textBtn.addEventListener("click", () => {
     currentView = "text";
-    document.querySelector(".view-text-btn").classList.add("active");
-    document.querySelector(".view-cards-btn").classList.remove("active");
+    textBtn.classList.add("active");
+    cardsBtn.classList.remove("active");
     applyFilters();
   });
 }
