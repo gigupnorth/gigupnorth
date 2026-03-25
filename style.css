@@ -159,6 +159,14 @@ main {
   padding-bottom: 5px;
   border-bottom: 2px solid #ccc;
 }
+
+.gig-date-header.sticky {
+  position: sticky;
+  top: 80px; /* adjust to match your #top-bar height */
+  background: #111; /* same as your page background so it looks clean */
+  z-index: 10;       /* above other content */
+  padding-top: 5px;  /* optional, adds a bit of space at top */
+}
 .gig-card {
   border: none;
   background: transparent;
