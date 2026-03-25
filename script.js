@@ -57,28 +57,31 @@ const colourOrder = ["blue","green","orange","black","red"];
    FETCH & INITIALIZE
 --------------------------------------------- */
 async function loadGigs() {
-  const url = "https://script.google.com/macros/s/AKfycbwQai3AEldoeZlXj6PNjqWauaJn2vShdPDMcR3DeDz1DyEDh_tOJ7o152QHrvxF4oA4rw/exec";
+  try {
+    const url = "https://script.google.com/macros/s/AKfycbwQai3AEldoeZlXj6PNjqWauaJn2vShdPDMcR3DeDz1DyEDh_tOJ7o152QHrvxF4oA4rw/exec";
+    let res = await fetch(url);
+    if (!res.ok) {
+      await new Promise(r => setTimeout(r, 1000));
+      res = await fetch(url);
+    }
 
-  let res = await fetch(url);
-  if (!res.ok) {
-    await new Promise(r => setTimeout(r, 1000));
-    res = await fetch(url);
+    const all = await res.json();
+
+    // Filter out past gigs
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    gigs = all.filter(g => g.date && new Date(g.date) >= today);
+
+    // Sort gigs by date ascending
+    gigs.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+    // Initialize filters, view, and buttons
+    setupAreaButtons();
+    setupViewToggle();
+    applyFilters();
+  } catch(e) {
+    console.error("Failed to load gigs:", e);
   }
-
-  const all = await res.json();
-
-  // Filter out past gigs
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  gigs = all.filter(g => g.date && new Date(g.date) >= today);
-
-  // Sort gigs by date ascending
-  gigs.sort((a,b) => new Date(a.date) - new Date(b.date));
-
-  // Initialize filters, view, and buttons
-  setupAreaButtons();
-  setupViewToggle();
-  applyFilters();
 }
 
 
@@ -109,6 +112,7 @@ function setupAreaButtons() {
 function setupViewToggle() {
   const cardsBtn = document.querySelector(".view-cards-btn");
   const textBtn = document.querySelector(".view-text-btn");
+
   if (!cardsBtn || !textBtn) return; // safety check
 
   cardsBtn.addEventListener("click", () => {
@@ -152,20 +156,20 @@ function applyFilters() {
   // Clear containers
   const cardsContainer = document.getElementById("cards-view");
   const textContainer = document.getElementById("text-view");
-  cardsContainer.innerHTML = "";
-  textContainer.innerHTML = "";
+  if (cardsContainer) cardsContainer.innerHTML = "";
+  if (textContainer) textContainer.innerHTML = "";
 
   if (currentView === "cards") {
-    cardsContainer.style.display = "flex";
-    textContainer.style.display = "none";
+    if (cardsContainer) cardsContainer.style.display = "flex";
+    if (textContainer) textContainer.style.display = "none";
     NextChunk();
     if (!scrollAttached) {
       window.addEventListener("scroll", handleLazyScroll);
       scrollAttached = true;
     }
   } else {
-    cardsContainer.style.display = "none";
-    textContainer.style.display = "block";
+    if (cardsContainer) cardsContainer.style.display = "none";
+    if (textContainer) textContainer.style.display = "block";
     renderTextView();
   }
 }
@@ -178,6 +182,7 @@ function handleLazyScroll() {
   if (!lazyActive) return;
   const scrollPosition = window.scrollY + window.innerHeight;
   const container = document.getElementById("cards-view");
+  if (!container) return;
   const threshold = container.offsetTop + container.offsetHeight - 200;
   if (scrollPosition >= threshold) NextChunk();
 }
@@ -189,6 +194,7 @@ function handleLazyScroll() {
 function NextChunk() {
   if (!lazyActive) return;
   const container = document.getElementById("cards-view");
+  if (!container) return;
 
   // Take next CHUNK_SIZE dates
   const slice = lazyList.slice(Index, Index + CHUNK_SIZE);
@@ -262,6 +268,7 @@ function buildCard(g) {
 --------------------------------------------- */
 function renderTextView() {
   const container = document.getElementById("text-view");
+  if (!container) return;
   container.innerHTML = "";
 
   lazyList.forEach(day => {
