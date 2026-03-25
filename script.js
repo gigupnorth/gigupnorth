@@ -40,16 +40,16 @@ const venueImages = {
 /* ---------------------------------------------
    GLOBALS
 --------------------------------------------- */
-let gigs = [];             // All gigs
-let lazyList = [];         // [{date, gigs[]}, ...] for lazy rendering
-let Index = 0;             // Lazy load index
-const CHUNK_SIZE = 3;      // Number of dates to load per scroll
+let gigs = [];             
+let lazyList = [];         
+let Index = 0;             
+const CHUNK_SIZE = 3;      // number of dates per chunk
 let lazyActive = false;
 let scrollAttached = false;
 let currentAreaFilters = ["Darlo","Durham","Middlesbrough","Newcastle","Sunderland"];
 let currentView = "cards"; // "cards" or "text"
 
-// Colour order for each day
+// Colour order for sorting within each date
 const colourOrder = ["blue","green","orange","black","red"];
 
 /* ---------------------------------------------
@@ -68,14 +68,14 @@ async function loadGigs() {
     if (!res.ok) throw new Error("Fetch failed");
     const all = await res.json();
 
-    // Filter out past gigs
     const today = new Date();
     today.setHours(0,0,0,0);
     gigs = all.filter(g => g.date && new Date(g.date) >= today);
 
     // Sort by date ascending
     gigs.sort((a,b)=>new Date(a.date)-new Date(b.date));
-    if (!gigs.length) gigs = fallbackGigs; // fallback if fetch returns empty
+
+    if (!gigs.length) gigs = fallbackGigs; // fallback if empty
   } catch(e) {
     console.warn("Fetch failed, using fallback gigs:", e);
     gigs = fallbackGigs;
@@ -130,7 +130,7 @@ function setupViewToggle() {
 }
 
 /* ---------------------------------------------
-   APPLY FILTERS & LAZY LIST PREP
+   APPLY FILTERS & PREP LAZY LIST
 --------------------------------------------- */
 function applyFilters() {
   const filtered = gigs.filter(g => currentAreaFilters.includes(g.area));
@@ -169,7 +169,7 @@ function applyFilters() {
 }
 
 /* ---------------------------------------------
-   LAZY SCROLL
+   LAZY SCROLL HANDLER
 --------------------------------------------- */
 function handleLazyScroll(){
   if(!lazyActive) return;
@@ -181,7 +181,7 @@ function handleLazyScroll(){
 }
 
 /* ---------------------------------------------
-   NEXT CHUNK
+   LOAD NEXT CHUNK
 --------------------------------------------- */
 function NextChunk(){
   if(!lazyActive) return;
@@ -195,7 +195,7 @@ function NextChunk(){
     header.textContent=formatDateHeading(day.date);
     container.appendChild(header);
 
-    // sort by colour
+    // sort by colour order
     day.gigs.sort((a,b)=>colourOrder.indexOf(a.colour||"blue")-colourOrder.indexOf(b.colour||"blue"));
     day.gigs.forEach(g=>container.appendChild(buildCard(g)));
   });
