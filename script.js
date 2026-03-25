@@ -50,6 +50,9 @@ let lastRenderedDate = null;
 let currentAreaFilters = ["Darlo","Durham","Middlesbrough","Newcastle","Sunderland"];
 let currentView = "cards"; // "cards" or "text"
 
+// Define the colour order for each day
+const colourOrder = ["blue","green","orange","black","red"];
+
 
 /* ---------------------------------------------
    FETCH & INITIALIZE
@@ -87,7 +90,7 @@ async function loadGigs() {
 
 
 /* ---------------------------------------------
-   PARSE DATE (from your API format)
+   PARSE DATE
 --------------------------------------------- */
 function parseGigDate(dateStr) {
   return new Date(dateStr);
@@ -193,20 +196,35 @@ function NextChunk() {
   const container = document.getElementById("cards-view");
   const slice = lazyList.slice(Index, Index + CHUNK_SIZE);
 
+  // Group slice by date
+  const gigsByDate = {};
   slice.forEach(g => {
-    const thisDate = g.date;
+    if (!gigsByDate[g.date]) gigsByDate[g.date] = [];
+    gigsByDate[g.date].push(g);
+  });
+
+  Object.keys(gigsByDate).forEach(dateStr => {
+    const dayGigs = gigsByDate[dateStr];
+
+    // Sort gigs by colour order
+    dayGigs.sort((a,b) => {
+      return colourOrder.indexOf(a.colour || "blue") - colourOrder.indexOf(b.colour || "blue");
+    });
 
     // Insert date header if new
-    if (thisDate !== lastRenderedDate) {
+    if (dateStr !== lastRenderedDate) {
       const header = document.createElement("div");
-      header.className = "gig-date-header sticky"; // sticky class added
-      header.textContent = formatDateHeading(thisDate);
+      header.className = "gig-date-header sticky"; // sticky header
+      header.textContent = formatDateHeading(dateStr);
       container.appendChild(header);
-      lastRenderedDate = thisDate;
+      lastRenderedDate = dateStr;
     }
 
-    const card = buildCard(g);
-    container.appendChild(card);
+    // Append cards
+    dayGigs.forEach(g => {
+      const card = buildCard(g);
+      container.appendChild(card);
+    });
   });
 
   Index += CHUNK_SIZE;
@@ -253,7 +271,7 @@ function buildCard(g) {
     btn.className = "more-btn";
     btn.textContent = "more";
     btn.addEventListener("click", () => {
-      alert(g.extra); // simple way; can be replaced with your expanded info
+      alert(g.extra); // simple way; can be replaced with expanded info popup
     });
     textWrapper.appendChild(btn);
   }
@@ -267,9 +285,31 @@ function buildCard(g) {
 --------------------------------------------- */
 function renderTextView() {
   const container = document.getElementById("text-view");
-  container.innerHTML = lazyList
-    .map(g => `${g.date} - ${g.title} @ ${g.venue}`)
-    .join("\n");
+
+  // Group text view by date
+  const grouped = {};
+  lazyList.forEach(g => {
+    if (!grouped[g.date]) grouped[g.date] = [];
+    grouped[g.date].push(g);
+  });
+
+  container.innerHTML = "";
+
+  Object.keys(grouped).forEach(dateStr => {
+    const header = document.createElement("div");
+    header.className = "gig-date-header";
+    header.textContent = formatDateHeading(dateStr);
+    container.appendChild(header);
+
+    // Sort by colour order
+    grouped[dateStr].sort((a,b) => colourOrder.indexOf(a.colour || "blue") - colourOrder.indexOf(b.colour || "blue"));
+
+    grouped[dateStr].forEach(g => {
+      const div = document.createElement("div");
+      div.textContent = `${g.title} @ ${g.venue} ${g.time || ""} ${g.price || ""}`;
+      container.appendChild(div);
+    });
+  });
 }
 
 
