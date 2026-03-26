@@ -71,3 +71,6 @@ const venueImages = {
     container.appendChild(card);
   });
 })();
+function setupAreaButtons() {
+  console.log("Area buttons setup placeholder — not implemented yet.");
+}
