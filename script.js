@@ -160,56 +160,75 @@ function setupViewToggle() {
 
   cardsBtn.addEventListener("click", () => {
     currentView = "cards";
+
     cardsBtn.classList.add("active");
     textBtn.classList.remove("active");
+
+    // Reset scroll for lazy loading
+    if (!scrollAttached) {
+      window.addEventListener("scroll", handleLazyScroll);
+      scrollAttached = true;
+    }
+
     applyFilters();
   });
 
   textBtn.addEventListener("click", () => {
     currentView = "text";
+
     textBtn.classList.add("active");
     cardsBtn.classList.remove("active");
+
     applyFilters();
   });
 }
-
 /* ---------------------------------------------
    APPLY FILTERS & PREP LAZY LIST
 --------------------------------------------- */
 function applyFilters() {
-  const filtered = gigs.filter(g => currentAreaFilters.includes(g.area));
-
-  const grouped = {};
-  filtered.forEach(g=>{
-    if(!grouped[g.date]) grouped[g.date]=[];
-    grouped[g.date].push(g);
+  // 🔹 Filter gigs by area (case-insensitive)
+  const filtered = gigs.filter(g => {
+    if (!g.area) return false;
+    return currentAreaFilters.some(area => area.toLowerCase() === g.area.toLowerCase());
   });
 
+  // 🔹 Group by date (use parseDate from loadGigs)
+  const grouped = {};
+  filtered.forEach(g => {
+    const dateKey = g.date; // keep original string for display
+    if (!grouped[dateKey]) grouped[dateKey] = [];
+    grouped[dateKey].push(g);
+  });
+
+  // 🔹 Sort dates safely
   lazyList = Object.keys(grouped)
-                 .sort((a,b)=>new Date(a)-new Date(b))
-                 .map(d=>({date:d, gigs:grouped[d]}));
+                 .sort((a, b) => parseDate(a) - parseDate(b))
+                 .map(d => ({ date: d, gigs: grouped[d] }));
 
   Index = 0;
   lazyActive = true;
 
   const cardsContainer = document.getElementById("cards-view");
   const textContainer = document.getElementById("text-view");
-  if(cardsContainer) cardsContainer.innerHTML="";
-  if(textContainer) textContainer.innerHTML="";
+  if (cardsContainer) cardsContainer.innerHTML = "";
+  if (textContainer) textContainer.innerHTML = "";
 
-  if(currentView==="cards"){
-    if(cardsContainer) cardsContainer.style.display="flex";
-    if(textContainer) textContainer.style.display="none";
+  if (currentView === "cards") {
+    if (cardsContainer) cardsContainer.style.display = "flex";
+    if (textContainer) textContainer.style.display = "none";
     NextChunk();
-    if(!scrollAttached){
+
+    if (!scrollAttached) {
       window.addEventListener("scroll", handleLazyScroll);
-      scrollAttached=true;
+      scrollAttached = true;
     }
   } else {
-    if(cardsContainer) cardsContainer.style.display="none";
-    if(textContainer) textContainer.style.display="block";
+    if (cardsContainer) cardsContainer.style.display = "none";
+    if (textContainer) textContainer.style.display = "block";
     renderTextView();
   }
+
+  console.log("APPLY FILTERS: lazyList ready", lazyList);
 }
 
 /* ---------------------------------------------
