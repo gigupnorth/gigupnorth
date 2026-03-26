@@ -63,21 +63,55 @@ async function loadGigs() {
     {title:"Sample Orange Gig", venue:"Venue C", date: new Date(new Date().setDate(new Date().getDate()+1)).toISOString().slice(0,10), time:"19:30", price:"£15", area:"Middlesbrough", colour:"orange"}
   ];
 
+  // 🔧 SAFE DATE PARSER
+  function parseDate(d) {
+    if (!d) return null;
+
+    // DD/MM/YYYY
+    if (d.includes("/")) {
+      const [day, month, year] = d.split("/");
+      return new Date(`${year}-${month}-${day}`);
+    }
+
+    // DD-MM-YYYY
+    if (d.includes("-") && d.split("-")[0].length === 2) {
+      const [day, month, year] = d.split("-");
+      return new Date(`${year}-${month}-${day}`);
+    }
+
+    // ISO or fallback
+    return new Date(d);
+  }
+
   try {
     const url = "https://script.google.com/macros/s/AKfycbwQai3AEldoeZlXj6PNjqWauaJn2vShdPDMcR3DeDz1DyEDh_tOJ7o152QHrvxF4oA4rw/exec";
     let res = await fetch(url);
     if (!res.ok) throw new Error("Fetch failed");
+
     const all = await res.json();
     console.log("RAW DATA:", all);
-    console.log("FILTERED GIGS:", gigs);
+
     const today = new Date();
     today.setHours(0,0,0,0);
-    gigs = all;
 
-    // Sort by date ascending
-    gigs.sort((a,b)=>new Date(a.date)-new Date(b.date));
+    // ✅ FILTER WITH SAFE PARSE
+    gigs = all.filter(g => {
+      const d = parseDate(g.date);
+      return d && d >= today;
+    });
 
-    if (!gigs.length) gigs = fallbackGigs; // fallback if empty
+    console.log("AFTER DATE FILTER:", gigs);
+
+    // ✅ SORT WITH SAFE PARSE
+    gigs.sort((a, b) => {
+      return parseDate(a.date) - parseDate(b.date);
+    });
+
+    if (!gigs.length) {
+      console.warn("No gigs after filtering, using fallback");
+      gigs = fallbackGigs;
+    }
+
   } catch(e) {
     console.warn("Fetch failed, using fallback gigs:", e);
     gigs = fallbackGigs;
