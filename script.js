@@ -127,21 +127,29 @@ async function loadGigs() {
 --------------------------------------------- */
 function setupAreaButtons() {
   const keys = document.querySelectorAll(".area-key .key");
+
   keys.forEach(key => {
     key.addEventListener("click", () => {
       const area = key.dataset.area;
-      if (currentAreaFilters.includes(area)) {
-        currentAreaFilters = currentAreaFilters.filter(a=>a!==area);
+
+      // ✅ make area matching case-insensitive
+      const lowerArea = area.toLowerCase();
+
+      if (currentAreaFilters.some(a => a.toLowerCase() === lowerArea)) {
+        // Remove from filter
+        currentAreaFilters = currentAreaFilters.filter(a => a.toLowerCase() !== lowerArea);
         key.classList.add("hidden-area");
       } else {
+        // Add to filter
         currentAreaFilters.push(area);
         key.classList.remove("hidden-area");
       }
+
+      // Re-render cards/text
       applyFilters();
     });
   });
 }
-
 /* ---------------------------------------------
    VIEW TOGGLE
 --------------------------------------------- */
