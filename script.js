@@ -41,16 +41,15 @@ const venueImages = {
 /* ---------------------------------------------
    GLOBALS
 --------------------------------------------- */
-let gigs = [];             
-let lazyList = [];         
-let Index = 0;             
+let gigs = [];
+let lazyList = [];
+let Index = 0;
 const CHUNK_SIZE = 3;      // number of dates per chunk
 let lazyActive = false;
 let scrollAttached = false;
-let currentAreaFilters = ["Darlo","Durham","Middlesbrough","Newcastle","Sunderland"];
+let currentAreaFilters = [];
 let currentView = "cards"; // "cards" or "text"
 
-// Colour order for sorting within each date
 const colourOrder = ["blue","green","orange","black","red"];
 
 /* ---------------------------------------------
@@ -58,63 +57,37 @@ const colourOrder = ["blue","green","orange","black","red"];
 --------------------------------------------- */
 async function loadGigs() {
   const fallbackGigs = [
-    {title:"Sample Blue Gig", venue:"Venue A", date: new Date().toISOString().slice(0,10), time:"20:00", price:"£10", area:"Darlo", colour:"blue"},
-    {title:"Sample Green Gig", venue:"Venue B", date: new Date().toISOString().slice(0,10), time:"21:00", price:"£12", area:"Durham", colour:"green"},
-    {title:"Sample Orange Gig", venue:"Venue C", date: new Date(new Date().setDate(new Date().getDate()+1)).toISOString().slice(0,10), time:"19:30", price:"£15", area:"Middlesbrough", colour:"orange"}
+    {title:"Sample Blue Gig", venue:"Venue A", date:new Date().toISOString().slice(0,10), time:"20:00", price:"£10", area:"Darlo", colour:"blue"},
+    {title:"Sample Green Gig", venue:"Venue B", date:new Date().toISOString().slice(0,10), time:"21:00", price:"£12", area:"Durham", colour:"green"},
+    {title:"Sample Orange Gig", venue:"Venue C", date:new Date(new Date().setDate(new Date().getDate()+1)).toISOString().slice(0,10), time:"19:30", price:"£15", area:"Middlesbrough", colour:"orange"}
   ];
-
-  // 🔧 SAFE DATE PARSER
-  function parseDate(d) {
-    if (!d) return null;
-
-    // DD/MM/YYYY
-    if (d.includes("/")) {
-      const [day, month, year] = d.split("/");
-      return new Date(`${year}-${month}-${day}`);
-    }
-
-    // DD-MM-YYYY
-    if (d.includes("-") && d.split("-")[0].length === 2) {
-      const [day, month, year] = d.split("-");
-      return new Date(`${year}-${month}-${day}`);
-    }
-
-    // ISO or fallback
-    return new Date(d);
-  }
 
   try {
     const url = "https://script.google.com/macros/s/AKfycbwQai3AEldoeZlXj6PNjqWauaJn2vShdPDMcR3DeDz1DyEDh_tOJ7o152QHrvxF4oA4rw/exec";
     let res = await fetch(url);
     if (!res.ok) throw new Error("Fetch failed");
-
     const all = await res.json();
-    console.log("RAW DATA:", all);
 
+    gigs = all;
+
+    // Remove past gigs
     const today = new Date();
     today.setHours(0,0,0,0);
+    gigs = gigs.filter(g => g.date && new Date(g.date) >= today);
 
-    // ✅ FILTER WITH SAFE PARSE
-    gigs = all.filter(g => {
-      const d = parseDate(g.date);
-      return d && d >= today;
-    });
+    // Sort by date ascending
+    gigs.sort((a,b)=>new Date(a.date)-new Date(b.date));
 
-    console.log("AFTER DATE FILTER:", gigs);
+    if (!gigs.length) gigs = fallbackGigs;
 
-    // ✅ SORT WITH SAFE PARSE
-    gigs.sort((a, b) => {
-      return parseDate(a.date) - parseDate(b.date);
-    });
-
-    if (!gigs.length) {
-      console.warn("No gigs after filtering, using fallback");
-      gigs = fallbackGigs;
-    }
+    // Auto-populate area filters from fetched gigs
+    currentAreaFilters = [...new Set(gigs.map(g=>g.area))];
+    console.log("Current area filters:", currentAreaFilters);
 
   } catch(e) {
     console.warn("Fetch failed, using fallback gigs:", e);
     gigs = fallbackGigs;
+    currentAreaFilters = [...new Set(gigs.map(g=>g.area))];
   }
 
   setupAreaButtons();
@@ -123,114 +96,47 @@ async function loadGigs() {
 }
 
 /* ---------------------------------------------
-   AREA FILTERS
---------------------------------------------- */
-function setupAreaButtons() {
-  const keys = document.querySelectorAll(".area-key .key");
-
-  keys.forEach(key => {
-    key.addEventListener("click", () => {
-      const area = key.dataset.area;
-
-      // ✅ make area matching case-insensitive
-      const lowerArea = area.toLowerCase();
-
-      if (currentAreaFilters.some(a => a.toLowerCase() === lowerArea)) {
-        // Remove from filter
-        currentAreaFilters = currentAreaFilters.filter(a => a.toLowerCase() !== lowerArea);
-        key.classList.add("hidden-area");
-      } else {
-        // Add to filter
-        currentAreaFilters.push(area);
-        key.classList.remove("hidden-area");
-      }
-
-      // Re-render cards/text
-      applyFilters();
-    });
-  });
-}
-/* ---------------------------------------------
-   VIEW TOGGLE
---------------------------------------------- */
-function setupViewToggle() {
-  const cardsBtn = document.querySelector(".view-cards-btn");
-  const textBtn = document.querySelector(".view-text-btn");
-  if (!cardsBtn || !textBtn) return;
-
-  cardsBtn.addEventListener("click", () => {
-    currentView = "cards";
-
-    cardsBtn.classList.add("active");
-    textBtn.classList.remove("active");
-
-    // Reset scroll for lazy loading
-    if (!scrollAttached) {
-      window.addEventListener("scroll", handleLazyScroll);
-      scrollAttached = true;
-    }
-
-    applyFilters();
-  });
-
-  textBtn.addEventListener("click", () => {
-    currentView = "text";
-
-    textBtn.classList.add("active");
-    cardsBtn.classList.remove("active");
-
-    applyFilters();
-  });
-}
-/* ---------------------------------------------
    APPLY FILTERS & PREP LAZY LIST
 --------------------------------------------- */
 function applyFilters() {
-  // 🔹 Filter gigs by area (case-insensitive)
-  const filtered = gigs.filter(g => {
-    if (!g.area) return false;
-    return currentAreaFilters.some(area => area.toLowerCase() === g.area.toLowerCase());
-  });
+  // Filter gigs by area
+  const filtered = gigs.filter(g => currentAreaFilters.includes(g.area));
 
-  // 🔹 Group by date (use parseDate from loadGigs)
+  // Group gigs by date
   const grouped = {};
   filtered.forEach(g => {
-    const dateKey = g.date; // keep original string for display
-    if (!grouped[dateKey]) grouped[dateKey] = [];
-    grouped[dateKey].push(g);
+    if (!grouped[g.date]) grouped[g.date] = [];
+    grouped[g.date].push(g);
   });
 
-  // 🔹 Sort dates safely
   lazyList = Object.keys(grouped)
-                 .sort((a, b) => parseDate(a) - parseDate(b))
-                 .map(d => ({ date: d, gigs: grouped[d] }));
+                 .sort((a,b)=>new Date(a)-new Date(b))
+                 .map(d=>({date:d, gigs:grouped[d]}));
+
+  console.log("LazyList ready:", lazyList);
 
   Index = 0;
   lazyActive = true;
 
   const cardsContainer = document.getElementById("cards-view");
   const textContainer = document.getElementById("text-view");
-  if (cardsContainer) cardsContainer.innerHTML = "";
-  if (textContainer) textContainer.innerHTML = "";
+  if(cardsContainer) cardsContainer.innerHTML = "";
+  if(textContainer) textContainer.innerHTML = "";
 
-  if (currentView === "cards") {
-    if (cardsContainer) cardsContainer.style.display = "flex";
-    if (textContainer) textContainer.style.display = "none";
+  if(currentView === "cards") {
+    if(cardsContainer) cardsContainer.style.display = "flex";
+    if(textContainer) textContainer.style.display = "none";
     NextChunk();
-
-    if (!scrollAttached) {
+    if(!scrollAttached){
       window.addEventListener("scroll", handleLazyScroll);
       scrollAttached = true;
     }
   } else {
-    if (cardsContainer) cardsContainer.style.display = "none";
-    if (textContainer) textContainer.style.display = "block";
+    if(cardsContainer) cardsContainer.style.display = "none";
+    if(textContainer) textContainer.style.display = "block";
     renderTextView();
   }
-
-  console.log("APPLY FILTERS: lazyList ready", lazyList);
 }
-
 /* ---------------------------------------------
    LAZY SCROLL HANDLER
 --------------------------------------------- */
