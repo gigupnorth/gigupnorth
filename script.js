@@ -234,78 +234,100 @@ function applyFilters() {
 /* ---------------------------------------------
    LAZY SCROLL HANDLER
 --------------------------------------------- */
-function handleLazyScroll(){
-  if(!lazyActive) return;
+function handleLazyScroll() {
+  if (!lazyActive) return;
+
   const container = document.getElementById("cards-view");
-  if(!container) return;
-  const scrollPos = window.scrollY+window.innerHeight;
-  const threshold = container.offsetTop+container.offsetHeight-200;
-  if(scrollPos>=threshold) NextChunk();
+  if (!container) return;
+
+  const scrollPos = window.scrollY + window.innerHeight;
+  const threshold = container.offsetTop + container.scrollHeight - 150; // safer threshold
+
+  if (scrollPos >= threshold) {
+    NextChunk();
+  }
 }
 
 /* ---------------------------------------------
    LOAD NEXT CHUNK
 --------------------------------------------- */
-function NextChunk(){
-  if(!lazyActive) return;
-  const container = document.getElementById("cards-view");
-  if(!container) return;
+function NextChunk() {
+  if (!lazyActive) return;
 
-  const slice = lazyList.slice(Index, Index+CHUNK_SIZE);
-  slice.forEach(day=>{
+  const container = document.getElementById("cards-view");
+  if (!container) return;
+
+  const slice = lazyList.slice(Index, Index + CHUNK_SIZE);
+  if (!slice.length) {
+    lazyActive = false;
+    return;
+  }
+
+  slice.forEach(day => {
+    // Header for the date
     const header = document.createElement("div");
-    header.className="gig-date-header sticky";
-    header.textContent=formatDateHeading(day.date);
+    header.className = "gig-date-header sticky";
+    header.textContent = formatDateHeading(day.date);
     container.appendChild(header);
 
-    // sort by colour order
-    day.gigs.sort((a,b)=>colourOrder.indexOf(a.colour||"blue")-colourOrder.indexOf(b.colour||"blue"));
-    day.gigs.forEach(g=>container.appendChild(buildCard(g)));
+    // Sort gigs by colour order
+    day.gigs.sort((a, b) => colourOrder.indexOf(a.colour || "blue") - colourOrder.indexOf(b.colour || "blue"));
+
+    // Append each card
+    day.gigs.forEach(g => {
+      const card = buildCard(g);
+      container.appendChild(card);
+    });
   });
 
-  Index+=CHUNK_SIZE;
-  if(Index>=lazyList.length) lazyActive=false;
-}
+  Index += CHUNK_SIZE;
 
+  // Stop lazy loading if done
+  if (Index >= lazyList.length) lazyActive = false;
+}
 /* ---------------------------------------------
    BUILD CARD
 --------------------------------------------- */
-function buildCard(g){
+function buildCard(g) {
   const card = document.createElement("div");
-  card.className="gig-card";
-  card.dataset.colour=g.colour||"blue";
+  card.className = "gig-card";
+  card.dataset.colour = g.colour || "blue";
 
-  const inner=document.createElement("div");
-  inner.className="gig-card-inner";
+  const inner = document.createElement("div");
+  inner.className = "gig-card-inner";
 
-  const textWrapper=document.createElement("div");
-  textWrapper.className="gig-card-text gig-text-wrapper";
-  textWrapper.innerHTML=`
-    <div class="gig-title"><strong>${g.title}</strong></div>
-    <div class="gig-venue">${g.venue}</div>
-    <div class="gig-time">${g.time||""}</div>
-    <div class="gig-price">${g.price||""}</div>
+  const textWrapper = document.createElement("div");
+  textWrapper.className = "gig-card-text gig-text-wrapper";
+  textWrapper.innerHTML = `
+    <div class="gig-title"><strong>${g.title || "Untitled Gig"}</strong></div>
+    <div class="gig-venue">${g.venue || "Unknown Venue"}</div>
+    <div class="gig-time">${g.time || ""}</div>
+    <div class="gig-price">${g.price || ""}</div>
   `;
 
-  const imgDiv=document.createElement("div");
-  imgDiv.className="gig-card-image";
-  imgDiv.style.backgroundImage=`url('${g.image||"images/placeholder.png"}')`;
+  // Use a lookup table for venue images if available
+  const imgDiv = document.createElement("div");
+  imgDiv.className = "gig-card-image";
+  const imageUrl = g.image 
+                    || (venueImages && venueImages[g.venue]) 
+                    || "images/placeholder.png";
+  imgDiv.style.backgroundImage = `url('${imageUrl}')`;
 
   inner.appendChild(textWrapper);
   inner.appendChild(imgDiv);
   card.appendChild(inner);
 
-  if(g.extra){
-    const btn=document.createElement("button");
-    btn.className="more-btn";
-    btn.textContent="more";
-    btn.addEventListener("click", ()=>alert(g.extra));
+  // Optional "more" button for extra info
+  if (g.extra) {
+    const btn = document.createElement("button");
+    btn.className = "more-btn";
+    btn.textContent = "more";
+    btn.addEventListener("click", () => alert(g.extra));
     textWrapper.appendChild(btn);
   }
 
   return card;
 }
-
 /* ---------------------------------------------
    TEXT VIEW
 --------------------------------------------- */
@@ -332,12 +354,38 @@ function renderTextView(){
    DATE FORMATTER
 --------------------------------------------- */
 function formatDateHeading(dateStr){
-  const date=new Date(dateStr);
-  return date.toLocaleDateString("en-GB",{
-    weekday:"long", day:"numeric", month:"long", year:"numeric"
+  const date = parseDate(dateStr);
+  if (!date) return dateStr; // fallback if parsing fails
+  return date.toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
   });
 }
 
+/* ---------------------------------------------
+   SAFE DATE PARSER
+--------------------------------------------- */
+function parseDate(dateStr) {
+  if (!dateStr) return null;
+
+  // If already ISO (YYYY-MM-DD), just parse
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return new Date(dateStr + "T00:00"); // avoid timezone issues
+  }
+
+  // If UK format DD/MM/YYYY
+  const ukMatch = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(dateStr);
+  if (ukMatch) {
+    const [_, d, m, y] = ukMatch;
+    return new Date(`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T00:00`);
+  }
+
+  // fallback
+  const parsed = new Date(dateStr);
+  return isNaN(parsed) ? null : parsed;
+}
 /* ---------------------------------------------
    INITIALIZE
 --------------------------------------------- */
