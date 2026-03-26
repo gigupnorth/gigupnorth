@@ -1,4 +1,4 @@
-console.log("SCRIPT IS RUNNING");
+
 // Venue images lookup table
 const venueImages = {
   "The Globe": "https://gigupnorth.github.io/gigupnorth/images/globe.jpg",
