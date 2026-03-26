@@ -70,7 +70,7 @@ async function loadGigs() {
 
     const today = new Date();
     today.setHours(0,0,0,0);
-    gigs = all.filter(g => g.date && new Date(g.date) >= today);
+    gigs = all;
 
     // Sort by date ascending
     gigs.sort((a,b)=>new Date(a.date)-new Date(b.date));
