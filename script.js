@@ -67,7 +67,8 @@ async function loadGigs() {
     let res = await fetch(url);
     if (!res.ok) throw new Error("Fetch failed");
     const all = await res.json();
-
+    console.log("RAW DATA:", all);
+    console.log("FILTERED GIGS:", gigs);
     const today = new Date();
     today.setHours(0,0,0,0);
     gigs = all;
