@@ -58,7 +58,7 @@ async function loadData() {
 }
 
 function renderEvents(events) {
-  const container = document.getElementById("cards-container");
+  const container = document.getElementById("cards-view");
   container.innerHTML = "";
 
   // 🔹 sort by parsed date
