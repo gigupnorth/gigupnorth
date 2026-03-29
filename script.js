@@ -42,9 +42,7 @@ const DATA_URL = "https://script.googleusercontent.com/macros/echo?user_content_
 
 const COLOUR_ORDER = ["blue", "green", "orange", "red", "black"];
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadData();
-});
+document.addEventListener("DOMContentLoaded", loadData);
 
 async function loadData() {
   try {
@@ -55,7 +53,7 @@ async function loadData() {
 
     renderEvents(data);
   } catch (err) {
-    console.error("Error loading data:", err);
+    console.error(err);
   }
 }
 
@@ -63,54 +61,55 @@ function renderEvents(events) {
   const container = document.getElementById("cards-container");
   container.innerHTML = "";
 
-  // sort by date
-  events.sort((a, b) => new Date(a.date) - new Date(b.date));
+  // 🔹 sort by parsed date
+  events.sort((a, b) => parseDate(a.date) - parseDate(b.date));
 
-  // group by date
+  // 🔹 group by date string
   const grouped = {};
+
   events.forEach(ev => {
-    const date = formatDate(ev.date);
-    if (!grouped[date]) grouped[date] = [];
-    grouped[date].push(ev);
+    const dateKey = ev.date;
+
+    if (!grouped[dateKey]) grouped[dateKey] = [];
+    grouped[dateKey].push(ev);
   });
 
-  // render each date group
   Object.keys(grouped).forEach(date => {
 
-    // 🔹 date header
-    const dateBar = document.createElement("div");
-    dateBar.className = "date-bar";
-    dateBar.textContent = date;
-    container.appendChild(dateBar);
+    // 🔸 DATE BAR
+    const bar = document.createElement("div");
+    bar.className = "date-bar";
+    bar.textContent = date;
+    container.appendChild(bar);
 
-    // 🔹 sort inside date by colour order
-    const dayEvents = grouped[date];
-    dayEvents.sort((a, b) => {
-      return COLOUR_ORDER.indexOf(a.colour?.toLowerCase()) -
-             COLOUR_ORDER.indexOf(b.colour?.toLowerCase());
+    // 🔸 sort by colour
+    grouped[date].sort((a, b) => {
+      return COLOUR_ORDER.indexOf((a.colour || "").toLowerCase()) -
+             COLOUR_ORDER.indexOf((b.colour || "").toLowerCase());
     });
 
-    // 🔹 create cards
-    dayEvents.forEach(ev => {
-      const card = createCard(ev);
-      container.appendChild(card);
+    // 🔸 cards
+    grouped[date].forEach(ev => {
+      container.appendChild(createCard(ev));
     });
 
   });
 
-  initLazyLoading();
+  initLazyLoad();
 }
 
 function createCard(ev) {
   const card = document.createElement("div");
   card.className = `card ${ev.colour?.toLowerCase() || ""}`;
 
+  const image = ev.imageOverride || "";
+
   card.innerHTML = `
     <div class="card-inner">
       
       <div class="card-text">
         <h2>${ev.title || ""}</h2>
-        <p class="venue">${ev.venue || ""}</p>
+        <p>${ev.venue || ""}</p>
 
         <button class="more-btn">more</button>
 
@@ -118,13 +117,13 @@ function createCard(ev) {
           <p>${ev.date || ""}</p>
           <p>${ev.time || ""}</p>
           <p>${ev.price || ""}</p>
-          <p>${ev.area || ""}</p>
-          <p>${ev.extra || ""}</p>
+          <p>${ev.c6 || ""}</p>
+          <p>${ev.extraInfo || ev.extra || ""}</p>
         </div>
       </div>
 
       <div class="card-image">
-        <img data-src="${ev.image || ""}" alt="">
+        ${image ? `<img data-src="${image}" alt="">` : ""}
       </div>
 
     </div>
@@ -141,12 +140,13 @@ function createCard(ev) {
   return card;
 }
 
-function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-GB");
+// 🔹 Convert "Fri 20 Mar 2026" → Date object
+function parseDate(str) {
+  return new Date(str);
 }
 
-function initLazyLoading() {
+// 🔹 Lazy loading
+function initLazyLoad() {
   const imgs = document.querySelectorAll("img[data-src]");
 
   const observer = new IntersectionObserver(entries => {
