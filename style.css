@@ -159,7 +159,45 @@ main {
   padding-bottom: 5px;
   border-bottom: 2px solid #ccc;
 }
+.date-bar {
+  background: white;
+  color: black;
+  font-weight: bold;
+  text-align: center;
+  padding: 5px;
+  margin: 10px 0;
+}
 
+.card {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.card-inner {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-text {
+  flex: 1;
+}
+
+.card-image img {
+  width: 120px;
+  height: auto;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Colours */
+.card.blue { background: #007BFF; }
+.card.green { background: #28a745; }
+.card.orange { background: #fd7e14; }
+.card.red { background: #dc3545; }
+.card.black { background: #343a40; color: white; }
 .gig-date-header.sticky {
   position: sticky;
   top: 80px; /* adjust to match your #top-bar height */
