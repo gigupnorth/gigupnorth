@@ -102,31 +102,21 @@ function createCard(ev) {
   const card = document.createElement("div");
   card.className = `card ${ev.colour?.toLowerCase() || ""}`;
 
- let image = "";
-
-// 1. Use override image if provided
-if (ev.imageOverride && ev.imageOverride.trim() !== "") {
-  image = ev.imageOverride;
-}
-// 2. Otherwise use venue fallback
 let image = "";
 
-// 1. Use override image if provided
-if (ev.imageOverride && ev.imageOverride.trim() !== "") {
-  image = ev.imageOverride;
-} 
-// 2. Otherwise use venue fallback (cleaned venue name)
-else {
-  const venueKey = ev.venue?.trim();
+// Clean values
+const override = ev.imageOverride?.trim();
+const venueKey = ev.venue?.trim();
 
-  if (venueImages[venueKey]) {
-    image = venueImages[venueKey];
-  } else {
-    // 3. Final fallback image
-    image = "https://gigupnorth.github.io/gigupnorth/images/default.jpg";
-  }
-}
-// 3. Optional: final fallback image
+// 1. Use override ONLY if it's a real URL
+if (override && override.startsWith("http")) {
+  image = override;
+} 
+// 2. Otherwise use venue fallback
+else if (venueImages[venueKey]) {
+  image = venueImages[venueKey];
+} 
+// 3. Final fallback
 else {
   image = "https://gigupnorth.github.io/gigupnorth/images/default.jpg";
 }
