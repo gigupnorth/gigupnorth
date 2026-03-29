@@ -102,7 +102,20 @@ function createCard(ev) {
   const card = document.createElement("div");
   card.className = `card ${ev.colour?.toLowerCase() || ""}`;
 
-  const image = ev.imageOverride || "";
+ let image = "";
+
+// 1. Use override image if provided
+if (ev.imageOverride && ev.imageOverride.trim() !== "") {
+  image = ev.imageOverride;
+}
+// 2. Otherwise use venue fallback
+else if (venueImages[ev.venue]) {
+  image = venueImages[ev.venue];
+}
+// 3. Optional: final fallback image
+else {
+  image = "https://gigupnorth.github.io/gigupnorth/images/default.jpg";
+}
 
   card.innerHTML = `
     <div class="card-inner">
