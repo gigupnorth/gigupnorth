@@ -109,8 +109,22 @@ if (ev.imageOverride && ev.imageOverride.trim() !== "") {
   image = ev.imageOverride;
 }
 // 2. Otherwise use venue fallback
-else if (venueImages[ev.venue]) {
-  image = venueImages[ev.venue];
+let image = "";
+
+// 1. Use override image if provided
+if (ev.imageOverride && ev.imageOverride.trim() !== "") {
+  image = ev.imageOverride;
+} 
+// 2. Otherwise use venue fallback (cleaned venue name)
+else {
+  const venueKey = ev.venue?.trim();
+
+  if (venueImages[venueKey]) {
+    image = venueImages[venueKey];
+  } else {
+    // 3. Final fallback image
+    image = "https://gigupnorth.github.io/gigupnorth/images/default.jpg";
+  }
 }
 // 3. Optional: final fallback image
 else {
