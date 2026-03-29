@@ -38,39 +38,127 @@ const venueImages = {
   "Red": "https://gigupnorth.github.io/gigupnorth/images/red.jpg",
 };
 
-(async function() {
-  // 1️⃣ Grab the container where cards will go
-  const container = document.getElementById("cards-view");
-  if (!container) {
-    console.error("Cards container not found!");
-    return;
-  }
+const DATA_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AWDtjMUO0zHzz3R8HcA9qi4m2a-TYhCsM3V-PpaOtrhoZ-Gauy2M5MtvdeYbAejv2wySLFts8mlxD6zzPQk3BgVvTpAF7bGRTWSsqSlypgCQGKyYpbwTuqaFi4x2FG8eNKgVPeNYU5EASTzZmo7RgcGsoW4et611NOqTA2reH_2pR5y3mzmBElvm0va4Jyjjy55GD5eP8UCKY3eIAkGTME2iTh2im0pkHZ6uS7rIx5oSUnvrMZyfIYzKHTIjhYHGzwyfpfamPWRg1aeFhBKV4sNKkhWoncf8R59YQd5cX6py&lib=MkZMWNRlE8Gssf6ZnwbShhlx9cXOLXORo";
 
-  // 2️⃣ Load your JSON data
-  let data = [];
+const COLOUR_ORDER = ["blue", "green", "orange", "red", "black"];
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadData();
+});
+
+async function loadData() {
   try {
-    const res = await fetch("data.json"); // replace with your JSON file path
-    data = await res.json();
-    console.log("Loaded JSON data:", data);
+    const res = await fetch(DATA_URL);
+    const data = await res.json();
+
+    console.log("DATA:", data);
+
+    renderEvents(data);
   } catch (err) {
-    console.error("Failed to load JSON data:", err);
-    return;
+    console.error("Error loading data:", err);
   }
+}
 
-  // 3️⃣ Loop through the data and create basic cards
-  data.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "card"; // style with your CSS
+function renderEvents(events) {
+  const container = document.getElementById("cards-container");
+  container.innerHTML = "";
 
-    // For now, just show title and venue
-    card.innerHTML = `
-      <h3>${item.title || "No title"}</h3>
-      <p>${item.venue || "No venue"}</p>
-    `;
+  // sort by date
+  events.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    container.appendChild(card);
+  // group by date
+  const grouped = {};
+  events.forEach(ev => {
+    const date = formatDate(ev.date);
+    if (!grouped[date]) grouped[date] = [];
+    grouped[date].push(ev);
   });
-})();
-function setupAreaButtons() {
-  console.log("Area buttons setup placeholder — not implemented yet.");
+
+  // render each date group
+  Object.keys(grouped).forEach(date => {
+
+    // 🔹 date header
+    const dateBar = document.createElement("div");
+    dateBar.className = "date-bar";
+    dateBar.textContent = date;
+    container.appendChild(dateBar);
+
+    // 🔹 sort inside date by colour order
+    const dayEvents = grouped[date];
+    dayEvents.sort((a, b) => {
+      return COLOUR_ORDER.indexOf(a.colour?.toLowerCase()) -
+             COLOUR_ORDER.indexOf(b.colour?.toLowerCase());
+    });
+
+    // 🔹 create cards
+    dayEvents.forEach(ev => {
+      const card = createCard(ev);
+      container.appendChild(card);
+    });
+
+  });
+
+  initLazyLoading();
+}
+
+function createCard(ev) {
+  const card = document.createElement("div");
+  card.className = `card ${ev.colour?.toLowerCase() || ""}`;
+
+  card.innerHTML = `
+    <div class="card-inner">
+      
+      <div class="card-text">
+        <h2>${ev.title || ""}</h2>
+        <p class="venue">${ev.venue || ""}</p>
+
+        <button class="more-btn">more</button>
+
+        <div class="extra hidden">
+          <p>${ev.date || ""}</p>
+          <p>${ev.time || ""}</p>
+          <p>${ev.price || ""}</p>
+          <p>${ev.area || ""}</p>
+          <p>${ev.extra || ""}</p>
+        </div>
+      </div>
+
+      <div class="card-image">
+        <img data-src="${ev.image || ""}" alt="">
+      </div>
+
+    </div>
+  `;
+
+  const btn = card.querySelector(".more-btn");
+  const extra = card.querySelector(".extra");
+
+  btn.addEventListener("click", () => {
+    extra.classList.toggle("hidden");
+    btn.textContent = extra.classList.contains("hidden") ? "more" : "less";
+  });
+
+  return card;
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-GB");
+}
+
+function initLazyLoading() {
+  const imgs = document.querySelectorAll("img[data-src]");
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src;
+        img.removeAttribute("data-src");
+        observer.unobserve(img);
+      }
+    });
+  });
+
+  imgs.forEach(img => observer.observe(img));
 }
