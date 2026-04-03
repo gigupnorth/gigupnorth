@@ -4,7 +4,7 @@ const venueImages = {
   "The Globe": "https://gigupnorth.github.io/gigupnorth/images/globe.jpg",
   "Downcast": "https://gigupnorth.github.io/gigupnorth/images/downcast.jpg",
   "Independent": "https://gigupnorth.github.io/gigupnorth/images/independent.jpg",
-   "The Studio": "https://gigupnorth.github.io/gigupnorth/images/studio.jpg",
+   "The Studio": "https://gigupnorth.github.io/gigupnorth/images/studio.jpeg",
   "Anarchy Brew": "https://gigupnorth.github.io/gigupnorth/images/anarchy.jpeg",
   "Trillians": "https://gigupnorth.github.io/gigupnorth/images/trillians.jpg",
   "NE Volume Bar": "https://gigupnorth.github.io/gigupnorth/images/nevolume.jpg",
@@ -36,8 +36,8 @@ const venueImages = {
   "Wylam Brewery": "https://gigupnorth.github.io/gigupnorth/images/wylam.jpg",
     "The Angel": "https://gigupnorth.github.io/gigupnorth/images/angel.jpg",
   "The Fire Station": "https://gigupnorth.github.io/gigupnorth/images/fire.jpg",
-   "Georgian Theatre": "https://gigupnorth.github.io/gigupnorth/images/george.jpg",
-  "Red": "https://gigupnorth.github.io/gigupnorth/images/red.jpg",
+   "Georgian Theatre": "https://gigupnorth.github.io/gigupnorth/images/george.jpeg",
+  "Red": "https://gigupnorth.github.io/gigupnorth/images/red.jpeg",
 };
 
 const DATA_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AWDtjMUO0zHzz3R8HcA9qi4m2a-TYhCsM3V-PpaOtrhoZ-Gauy2M5MtvdeYbAejv2wySLFts8mlxD6zzPQk3BgVvTpAF7bGRTWSsqSlypgCQGKyYpbwTuqaFi4x2FG8eNKgVPeNYU5EASTzZmo7RgcGsoW4et611NOqTA2reH_2pR5y3mzmBElvm0va4Jyjjy55GD5eP8UCKY3eIAkGTME2iTh2im0pkHZ6uS7rIx5oSUnvrMZyfIYzKHTIjhYHGzwyfpfamPWRg1aeFhBKV4sNKkhWoncf8R59YQd5cX6py&lib=MkZMWNRlE8Gssf6ZnwbShhlx9cXOLXORo";
