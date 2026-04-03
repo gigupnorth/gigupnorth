@@ -183,10 +183,7 @@ main {
   flex: 1;
 }
 
-#top-bar .card-image img {
-  width: 120px;
-  height: auto;
-}
+
 
 .hidden {
   display: none;
