@@ -234,7 +234,7 @@ main {
 
 /* RIGHT SIDE — IMAGE (25%) */
 .gig-card-image {
-  flex: 0.0.220px;
+  flex: 250px;
   box-shadow: 0 0 0 2px rgba(255,255,255,0.15);
   border-radius: 10px;
   background-size: cover;
