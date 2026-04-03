@@ -113,7 +113,7 @@ main {
 }
 
 /* --------------------------------------------------
-   BIRDS / TEXT TOGGLE
+   cardS / TEXT TOGGLE
 -------------------------------------------------- */
 .view-toggle {
   display: flex;
@@ -140,9 +140,9 @@ main {
 }
 
 /* --------------------------------------------------
-   BIRD LIST (vertical)
+   card LIST (vertical)
 -------------------------------------------------- */
-#bird-view {
+#card-view {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -168,22 +168,22 @@ main {
   margin: 10px 0;
 }
 
-.bird {
+.card {
   margin: 10px 0;
   padding: 10px;
   border-radius: 8px;
 }
 
-.bird-inner {
+.card-inner {
   display: flex;
   justify-content: space-between;
 }
 
-.bird-text {
+.card-text {
   flex: 1;
 }
 
-.bird-image img {
+.card-image img {
   width: 120px;
   height: auto;
 }
@@ -194,11 +194,11 @@ main {
 }
 
 /* Colours */
-.bird.blue { background: #007BFF; }
-.bird.green { background: #28a745; }
-.bird.orange { background: #fd7e14; }
-.bird.red { background: #dc3545; }
-.bird.black { background: #343a40; color: white; }
+.card.blue { background: #007BFF; }
+.card.green { background: #28a745; }
+.card.orange { background: #fd7e14; }
+.card.red { background: #dc3545; }
+.card.black { background: #343a40; color: white; }
 .gig-date-header.sticky {
   position: sticky;
   top: 80px; /* adjust to match your #top-bar height */
