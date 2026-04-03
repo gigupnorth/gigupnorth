@@ -223,7 +223,8 @@ main {
 
 /* LEFT SIDE — TEXT (75%) */
 .gig-card-text {
-  flex: 2.6;
+  flex: 1;
+   min-width: 0;
   padding: 0.5rem 0;
   display: flex;
   flex-direction: column;
@@ -233,9 +234,9 @@ main {
 
 /* RIGHT SIDE — IMAGE (25%) */
 .gig-card-image {
-  flex: 1.4;
+  flex: 0.0.220px;
   box-shadow: 0 0 0 2px rgba(255,255,255,0.15);
-  border-radius: 12px;
+  border-radius: 10px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
