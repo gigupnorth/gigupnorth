@@ -213,15 +213,16 @@ main {
 
 .gig-card-inner {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   width: 100%;
   min-height: 180px;
   align-items: stretch;
+  padding: 5px; /* 👈 THIS creates the edge gap */
 }
 
 /* LEFT SIDE — TEXT (75%) */
 .gig-card-text {
-  flex: 3;
+  flex: 2.6;
   padding: 0.5rem 0;
   display: flex;
   flex-direction: column;
@@ -231,8 +232,8 @@ main {
 
 /* RIGHT SIDE — IMAGE (25%) */
 .gig-card-image {
-  flex: 1;
-  border: 2px solid white;
+  flex: 1.4;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.15);
   border-radius: 12px;
   background-size: cover;
   background-position: center;
