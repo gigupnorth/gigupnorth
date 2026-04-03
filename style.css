@@ -153,11 +153,14 @@ main {
    CLEAN TWO-COLUMN CARD LAYOUT
 -------------------------------------------------- */
 .gig-date-header {
-  font-size: 1.4rem;
+  position: sticky;
+  top: 60px;           /* height of your top bar */
+  background: #111;    /* match page background */
+  z-index: 10;         /* above cards */
+  padding: 8px 10px;
   font-weight: bold;
-  margin: 20px 0 10px;
-  padding-bottom: 5px;
-  border-bottom: 2px solid #ccc;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #333; /* optional separator */
 }
 .date-bar {
   background: white;
