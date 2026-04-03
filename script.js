@@ -2,6 +2,7 @@
 // Venue images lookup table
 const venueImages = {
   "The Globe": "https://gigupnorth.github.io/gigupnorth/images/globe.jpg",
+  "Downcast": "https://gigupnorth.github.io/gigupnorth/images/downcast.jpg",
   "Independent": "https://gigupnorth.github.io/gigupnorth/images/independent.jpg",
    "The Studio": "https://gigupnorth.github.io/gigupnorth/images/studio.jpg",
   "Anarchy Brew": "https://gigupnorth.github.io/gigupnorth/images/anarchy.jpg",
