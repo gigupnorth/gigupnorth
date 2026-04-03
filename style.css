@@ -284,8 +284,8 @@ main {
   }
 
   .gig-card-image {
-    height: 200px;
-    width: 100%;
+    height: 250px;
+    width: 125%;
   }
 }
 /* REMOVE OLD COLOURED CARD BACKGROUNDS */
