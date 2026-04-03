@@ -152,23 +152,38 @@ main {
 /* --------------------------------------------------
    CLEAN TWO-COLUMN CARD LAYOUT
 -------------------------------------------------- */
+/* ----------------------------
+   STICKY DATE HEADERS
+---------------------------- */
+
+/* Main date header that stays pinned at top */
 .gig-date-header {
   position: sticky;
-  top: 60px;           /* height of your top bar */
-  background: #111;    /* match page background */
-  z-index: 10;         /* above cards */
-  padding: 8px 10px;
+  top: 80px;               /* adjust to match your #top-bar height */
+  background: #111;        /* same as page background */
+  z-index: 10;             /* above cards */
+  padding: 8px 12px;       /* internal spacing */
   font-weight: bold;
-  font-size: 1.2rem;
-  border-bottom: 1px solid #333; /* optional separator */
+  font-size: 1.25rem;
+  border-bottom: 2px solid #333; /* subtle separator */
+  color: #fff;             /* ensures it’s visible on dark background */
 }
+
+/* Add some vertical spacing between consecutive date headers */
+.gig-date-header + .gig-date-header {
+  margin-top: 12px;        /* pushes next section down slightly */
+}
+
+/* Optional smaller date bars inside cards section (like for mobile or alternative styling) */
 .date-bar {
-  background: white;
-  color: black;
+  background: #222;        /* slightly lighter for contrast */
+  color: #fff;             /* text color */
   font-weight: bold;
   text-align: center;
-  padding: 5px;
-  margin: 10px 0;
+  padding: 6px 10px;
+  margin: 10px 0;          /* space around the bar */
+  border-radius: 6px;      /* rounded edges */
+  box-sizing: border-box;
 }
 
 .card {
@@ -187,7 +202,7 @@ main {
 }
 
 .card-image img {
-  width: 120px;
+  width: 200px;
   height: auto;
 }
 
@@ -202,13 +217,7 @@ main {
 .card.orange { background: #fd7e14; }
 .card.red { background: #dc3545; }
 .card.black { background: #343a40; color: white; }
-.gig-date-header.sticky {
-  position: sticky;
-  top: 80px; /* adjust to match your #top-bar height */
-  background: #111; /* same as your page background so it looks clean */
-  z-index: 10;       /* above other content */
-  padding-top: 5px;  /* optional, adds a bit of space at top */
-}
+
 .gig-card {
   border: none;
   background: transparent;
