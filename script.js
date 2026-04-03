@@ -5,7 +5,7 @@ const venueImages = {
   "Downcast": "https://gigupnorth.github.io/gigupnorth/images/downcast.jpg",
   "Independent": "https://gigupnorth.github.io/gigupnorth/images/independent.jpg",
    "The Studio": "https://gigupnorth.github.io/gigupnorth/images/studio.jpg",
-  "Anarchy Brew": "https://gigupnorth.github.io/gigupnorth/images/anarchy.jpg",
+  "Anarchy Brew": "https://gigupnorth.github.io/gigupnorth/images/anarchy.jpeg",
   "Trillians": "https://gigupnorth.github.io/gigupnorth/images/trillians.jpg",
   "NE Volume Bar": "https://gigupnorth.github.io/gigupnorth/images/nevolume.jpg",
   "Cobalt Studios": "https://gigupnorth.github.io/gigupnorth/images/cobalt.jpg",
