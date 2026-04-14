@@ -44,17 +44,20 @@ let cachedEvents = [];
 const DATA_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AWDtjMUO0zHzz3R8HcA9qi4m2a-TYhCsM3V-PpaOtrhoZ-Gauy2M5MtvdeYbAejv2wySLFts8mlxD6zzPQk3BgVvTpAF7bGRTWSsqSlypgCQGKyYpbwTuqaFi4x2FG8eNKgVPeNYU5EASTzZmo7RgcGsoW4et611NOqTA2reH_2pR5y3mzmBElvm0va4Jyjjy55GD5eP8UCKY3eIAkGTME2iTh2im0pkHZ6uS7rIx5oSUnvrMZyfIYzKHTIjhYHGzwyfpfamPWRg1aeFhBKV4sNKkhWoncf8R59YQd5cX6py&lib=MkZMWNRlE8Gssf6ZnwbShhlx9cXOLXORo";
 
 const COLOUR_ORDER = ["blue", "green", "orange", "red", "black"];
-
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("view-toggle").addEventListener("click", () => {
+  loadData();
+
+  const btn = document.getElementById("view-toggle");
+
+  btn.addEventListener("click", () => {
     if (currentView === "cards") {
       currentView = "text";
       renderTextView(cachedEvents);
-      document.getElementById("view-toggle").textContent = "Card View";
+      btn.textContent = "Card View";
     } else {
       currentView = "cards";
       renderEvents(cachedEvents);
-      document.getElementById("view-toggle").textContent = "Text View";
+      btn.textContent = "Text View";
     }
   });
 });
@@ -75,12 +78,12 @@ function renderTextView(events) {
   container.innerHTML = "";
 
   // sort by date
-  events.sort((a, b) => parseDate(a.date) - parseDate(b.date));
+const sortedEvents = [...events].sort((a, b) => parseDate(a.date) - parseDate(b.date));
 
   // group by date
   const grouped = {};
 
-  events.forEach(ev => {
+  sortedEvents.forEach(ev => {
     const dateKey = ev.date;
     if (!grouped[dateKey]) grouped[dateKey] = [];
     grouped[dateKey].push(ev);
@@ -122,12 +125,11 @@ function renderEvents(events) {
   container.innerHTML = "";
 
   // 🔹 sort by parsed date
-  events.sort((a, b) => parseDate(a.date) - parseDate(b.date));
-
+const sortedEvents = [...events].sort((a, b) => parseDate(a.date) - parseDate(b.date));
   // 🔹 group by date string
   const grouped = {};
 
-  events.forEach(ev => {
+  sortedEvents.forEach(ev => {
     const dateKey = ev.date;
 
     if (!grouped[dateKey]) grouped[dateKey] = [];
@@ -219,7 +221,7 @@ else {
 
 // 🔹 Convert "Fri 20 Mar 2026" → Date object
 function parseDate(str) {
-  return new Date(str);
+  return new Date(str.replace(/^[A-Za-z]{3} /, ""));
 }
 
 // 🔹 Lazy loading
@@ -239,14 +241,4 @@ function initLazyLoad() {
 
   imgs.forEach(img => observer.observe(img));
 }
-document.getElementById("view-toggle").addEventListener("click", () => {
-  if (currentView === "cards") {
-    currentView = "text";
-    renderTextView(cachedEvents);
-    document.getElementById("view-toggle").textContent = "Card View";
-  } else {
-    currentView = "cards";
-    renderEvents(cachedEvents);
-    document.getElementById("view-toggle").textContent = "Text View";
-  }
-});
+
