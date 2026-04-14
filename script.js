@@ -125,7 +125,7 @@ const sortedEvents = [...events].sort((a, b) => parseDate(a.date) - parseDate(b.
     });
 
   });
-}
+
 function renderEvents(events) {
   const container = document.getElementById("cards-view");
   container.innerHTML = "";
