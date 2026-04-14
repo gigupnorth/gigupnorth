@@ -246,5 +246,4 @@ function initLazyLoad() {
   });
 
   imgs.forEach(img => observer.observe(img));
-}
 
