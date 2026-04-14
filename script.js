@@ -39,7 +39,8 @@ const venueImages = {
    "Georgian Theatre": "https://gigupnorth.github.io/gigupnorth/images/george.jpeg",
   "Red": "https://gigupnorth.github.io/gigupnorth/images/red.jpeg",
 };
-
+let currentView = "cards"; // "cards" or "text"
+let cachedEvents = [];
 const DATA_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AWDtjMUO0zHzz3R8HcA9qi4m2a-TYhCsM3V-PpaOtrhoZ-Gauy2M5MtvdeYbAejv2wySLFts8mlxD6zzPQk3BgVvTpAF7bGRTWSsqSlypgCQGKyYpbwTuqaFi4x2FG8eNKgVPeNYU5EASTzZmo7RgcGsoW4et611NOqTA2reH_2pR5y3mzmBElvm0va4Jyjjy55GD5eP8UCKY3eIAkGTME2iTh2im0pkHZ6uS7rIx5oSUnvrMZyfIYzKHTIjhYHGzwyfpfamPWRg1aeFhBKV4sNKkhWoncf8R59YQd5cX6py&lib=MkZMWNRlE8Gssf6ZnwbShhlx9cXOLXORo";
 
 const COLOUR_ORDER = ["blue", "green", "orange", "red", "black"];
@@ -51,14 +52,59 @@ async function loadData() {
     const res = await fetch(DATA_URL);
     const data = await res.json();
 
-    console.log("DATA:", data);
-
-    renderEvents(data);
+    cachedEvents = data; // ✅ store it
+    renderEvents(data);  // default view
   } catch (err) {
     console.error(err);
   }
 }
+function renderTextView(events) {
+  const container = document.getElementById("cards-view");
+  container.innerHTML = "";
 
+  // sort by date
+  events.sort((a, b) => parseDate(a.date) - parseDate(b.date));
+
+  // group by date
+  const grouped = {};
+
+  events.forEach(ev => {
+    const dateKey = ev.date;
+    if (!grouped[dateKey]) grouped[dateKey] = [];
+    grouped[dateKey].push(ev);
+  });
+
+  Object.keys(grouped).forEach(date => {
+
+    // 🔸 DATE HEADER
+    const header = document.createElement("div");
+    header.className = "date-bar";
+    header.textContent = date;
+    container.appendChild(header);
+
+    // 🔸 sort by colour (same logic)
+    grouped[date].sort((a, b) => {
+      return COLOUR_ORDER.indexOf((a.colour || "").toLowerCase()) -
+             COLOUR_ORDER.indexOf((b.colour || "").toLowerCase());
+    });
+
+    // 🔸 TEXT ROWS
+    grouped[date].forEach(ev => {
+      const row = document.createElement("div");
+      row.className = "text-row";
+
+      row.innerHTML = `
+        <span class="text-title">${ev.title || ""}</span>
+        <span class="text-venue">${ev.venue || ""}</span>
+        <span class="text-time">${ev.time || ""}</span>
+        <span class="text-price">${ev.price || ""}</span>
+      `;
+
+      container.appendChild(row);
+    });
+
+  });
+}
 function renderEvents(events) {
   const container = document.getElementById("cards-view");
   container.innerHTML = "";
