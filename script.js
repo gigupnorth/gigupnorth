@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
   loadData();
 
   const btn = document.getElementById("view-toggle");
-
+btn.setAttribute("aria-pressed", currentView === "text");
   btn.addEventListener("click", () => {
     if (currentView === "cards") {
       currentView = "text";
