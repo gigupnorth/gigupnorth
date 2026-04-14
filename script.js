@@ -49,18 +49,13 @@ const COLOUR_ORDER = ["blue", "green", "orange", "red", "black"];
 /* ---------------------------
    INIT
 ----------------------------*/
-document.addEventListener("DOMContentLoaded", () => {
-  loadData();
+loadData();
 
-  const btn = document.getElementById("view-toggle");
+const btn = document.getElementById("view-toggle");
 
-  if (!btn) {
-    console.error("view-toggle button not found");
-    return;
-  }
-
-  btn.setAttribute("aria-pressed", "false");
-
+if (!btn) {
+  console.error("view-toggle button not found");
+} else {
   btn.addEventListener("click", () => {
     if (currentView === "cards") {
       currentView = "text";
@@ -71,10 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
       renderEvents(cachedEvents);
       btn.textContent = "Text View";
     }
-
-    btn.setAttribute("aria-pressed", currentView === "text");
   });
-});
+}
 
 /* ---------------------------
    DATA
