@@ -41,19 +41,25 @@ const venueImages = {
 };
 let currentView = "cards"; // "cards" or "text"
 let cachedEvents = [];
+
 const DATA_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AWDtjMUO0zHzz3R8HcA9qi4m2a-TYhCsM3V-PpaOtrhoZ-Gauy2M5MtvdeYbAejv2wySLFts8mlxD6zzPQk3BgVvTpAF7bGRTWSsqSlypgCQGKyYpbwTuqaFi4x2FG8eNKgVPeNYU5EASTzZmo7RgcGsoW4et611NOqTA2reH_2pR5y3mzmBElvm0va4Jyjjy55GD5eP8UCKY3eIAkGTME2iTh2im0pkHZ6uS7rIx5oSUnvrMZyfIYzKHTIjhYHGzwyfpfamPWRg1aeFhBKV4sNKkhWoncf8R59YQd5cX6py&lib=MkZMWNRlE8Gssf6ZnwbShhlx9cXOLXORo";
 
 const COLOUR_ORDER = ["blue", "green", "orange", "red", "black"];
+
+/* ---------------------------
+   INIT
+----------------------------*/
 document.addEventListener("DOMContentLoaded", () => {
   loadData();
 
   const btn = document.getElementById("view-toggle");
 
-  // 🔥 STOP CRASH IF BUTTON NOT READY
   if (!btn) {
-    console.error("view-toggle not found in DOM");
+    console.error("view-toggle button not found");
     return;
   }
+
+  btn.setAttribute("aria-pressed", "false");
 
   btn.addEventListener("click", () => {
     if (currentView === "cards") {
@@ -65,28 +71,37 @@ document.addEventListener("DOMContentLoaded", () => {
       renderEvents(cachedEvents);
       btn.textContent = "Text View";
     }
+
+    btn.setAttribute("aria-pressed", currentView === "text");
   });
 });
 
+/* ---------------------------
+   DATA
+----------------------------*/
 async function loadData() {
   try {
     const res = await fetch(DATA_URL);
     const data = await res.json();
 
-    cachedEvents = data; // ✅ store it
-    renderEvents(data);  // default view
+    cachedEvents = data;
+    renderEvents(data);
   } catch (err) {
     console.error(err);
   }
 }
-function renderTextView(events) {
+
+/* ---------------------------
+   CARD VIEW
+----------------------------*/
+function renderEvents(events) {
   const container = document.getElementById("cards-view");
   container.innerHTML = "";
 
-  // sort by date
-const sortedEvents = [...events].sort((a, b) => parseDate(a.date) - parseDate(b.date));
+  const sortedEvents = [...events].sort(
+    (a, b) => parseDate(a.date) - parseDate(b.date)
+  );
 
-  // group by date
   const grouped = {};
 
   sortedEvents.forEach(ev => {
@@ -96,20 +111,58 @@ const sortedEvents = [...events].sort((a, b) => parseDate(a.date) - parseDate(b.
   });
 
   Object.keys(grouped).forEach(date => {
+    const bar = document.createElement("div");
+    bar.className = "date-bar";
+    bar.textContent = date;
+    container.appendChild(bar);
 
-    // 🔸 DATE HEADER
+    grouped[date].sort((a, b) => {
+      return (
+        COLOUR_ORDER.indexOf((a.colour || "").toLowerCase()) -
+        COLOUR_ORDER.indexOf((b.colour || "").toLowerCase())
+      );
+    });
+
+    grouped[date].forEach(ev => {
+      container.appendChild(createCard(ev));
+    });
+  });
+
+  initLazyLoad();
+}
+
+/* ---------------------------
+   TEXT VIEW
+----------------------------*/
+function renderTextView(events) {
+  const container = document.getElementById("cards-view");
+  container.innerHTML = "";
+
+  const sortedEvents = [...events].sort(
+    (a, b) => parseDate(a.date) - parseDate(b.date)
+  );
+
+  const grouped = {};
+
+  sortedEvents.forEach(ev => {
+    const dateKey = ev.date;
+    if (!grouped[dateKey]) grouped[dateKey] = [];
+    grouped[dateKey].push(ev);
+  });
+
+  Object.keys(grouped).forEach(date => {
     const header = document.createElement("div");
     header.className = "date-bar";
     header.textContent = date;
     container.appendChild(header);
 
-    // 🔸 sort by colour (same logic)
     grouped[date].sort((a, b) => {
-      return COLOUR_ORDER.indexOf((a.colour || "").toLowerCase()) -
-             COLOUR_ORDER.indexOf((b.colour || "").toLowerCase());
+      return (
+        COLOUR_ORDER.indexOf((a.colour || "").toLowerCase()) -
+        COLOUR_ORDER.indexOf((b.colour || "").toLowerCase())
+      );
     });
 
-    // 🔸 TEXT ROWS
     grouped[date].forEach(ev => {
       const row = document.createElement("div");
       row.className = "text-row";
@@ -123,75 +176,31 @@ const sortedEvents = [...events].sort((a, b) => parseDate(a.date) - parseDate(b.
 
       container.appendChild(row);
     });
-
   });
-
-function renderEvents(events) {
-  const container = document.getElementById("cards-view");
-  container.innerHTML = "";
-
-  // 🔹 sort by parsed date
-const sortedEvents = [...events].sort((a, b) => parseDate(a.date) - parseDate(b.date));
-  // 🔹 group by date string
-  const grouped = {};
-
-  sortedEvents.forEach(ev => {
-    const dateKey = ev.date;
-
-    if (!grouped[dateKey]) grouped[dateKey] = [];
-    grouped[dateKey].push(ev);
-  });
-
-  Object.keys(grouped).forEach(date => {
-
-    // 🔸 DATE BAR
-    const bar = document.createElement("div");
-    bar.className = "date-bar";
-    bar.textContent = date;
-    container.appendChild(bar);
-
-    // 🔸 sort by colour
-    grouped[date].sort((a, b) => {
-      return COLOUR_ORDER.indexOf((a.colour || "").toLowerCase()) -
-             COLOUR_ORDER.indexOf((b.colour || "").toLowerCase());
-    });
-
-    // 🔸 cards
-    grouped[date].forEach(ev => {
-      container.appendChild(createCard(ev));
-    });
-
-  });
-
-  initLazyLoad();
 }
 
+/* ---------------------------
+   CARD CREATION
+----------------------------*/
 function createCard(ev) {
   const card = document.createElement("div");
   card.className = `card ${ev.colour?.toLowerCase() || ""}`;
 
-let image = "";
+  let image = "";
 
-// Clean values
-const override = ev.imageOverride?.trim();
-const venueKey = ev.venue?.trim();
+  const override = ev.imageOverride?.trim();
+  const venueKey = ev.venue?.trim();
 
-// 1. Use override ONLY if it's a real URL
-if (override && override.startsWith("http")) {
-  image = override;
-} 
-// 2. Otherwise use venue fallback
-else if (venueImages[venueKey]) {
-  image = venueImages[venueKey];
-} 
-// 3. Final fallback
-else {
-  image = "https://gigupnorth.github.io/gigupnorth/images/default.jpg";
-}
+  if (override && override.startsWith("http")) {
+    image = override;
+  } else if (venueImages && venueImages[venueKey]) {
+    image = venueImages[venueKey];
+  } else {
+    image = "https://gigupnorth.github.io/gigupnorth/images/default.jpg";
+  }
 
   card.innerHTML = `
     <div class="card-inner">
-      
       <div class="card-text">
         <h2>${ev.title || ""}</h2>
         <p>${ev.venue || ""}</p>
@@ -210,7 +219,6 @@ else {
       <div class="card-image">
         ${image ? `<img data-src="${image}" alt="">` : ""}
       </div>
-
     </div>
   `;
 
@@ -225,12 +233,16 @@ else {
   return card;
 }
 
-// 🔹 Convert "Fri 20 Mar 2026" → Date object
+/* ---------------------------
+   DATE PARSER
+----------------------------*/
 function parseDate(str) {
   return new Date(str.replace(/^[A-Za-z]{3} /, ""));
 }
 
-// 🔹 Lazy loading
+/* ---------------------------
+   LAZY LOAD IMAGES
+----------------------------*/
 function initLazyLoad() {
   const imgs = document.querySelectorAll("img[data-src]");
 
@@ -246,5 +258,4 @@ function initLazyLoad() {
   });
 
   imgs.forEach(img => observer.observe(img));
-
 }
