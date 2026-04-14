@@ -227,3 +227,14 @@ function initLazyLoad() {
 
   imgs.forEach(img => observer.observe(img));
 }
+document.getElementById("view-toggle").addEventListener("click", () => {
+  if (currentView === "cards") {
+    currentView = "text";
+    renderTextView(cachedEvents);
+    document.getElementById("view-toggle").textContent = "Card View";
+  } else {
+    currentView = "cards";
+    renderEvents(cachedEvents);
+    document.getElementById("view-toggle").textContent = "Text View";
+  }
+});
