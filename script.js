@@ -48,7 +48,14 @@ document.addEventListener("DOMContentLoaded", () => {
   loadData();
 
   const btn = document.getElementById("view-toggle");
-btn.setAttribute("aria-pressed", currentView === "text");
+
+  if (!btn) {
+    console.error("view-toggle button not found");
+    return;
+  }
+
+  btn.setAttribute("aria-pressed", currentView === "text");
+
   btn.addEventListener("click", () => {
     if (currentView === "cards") {
       currentView = "text";
@@ -59,7 +66,10 @@ btn.setAttribute("aria-pressed", currentView === "text");
       renderEvents(cachedEvents);
       btn.textContent = "Text View";
     }
+
+    btn.setAttribute("aria-pressed", currentView === "text");
   });
+});
 });
 
 async function loadData() {
