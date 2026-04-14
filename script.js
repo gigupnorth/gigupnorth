@@ -78,7 +78,7 @@ async function loadData() {
   } catch (err) {
     console.error(err);
   }
-}
+
 function renderTextView(events) {
   const container = document.getElementById("cards-view");
   container.innerHTML = "";
