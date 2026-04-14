@@ -361,7 +361,26 @@ main {
     gap: 1rem; /* matches your existing spacing */
 }
 
+.text-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr;
+  padding: 6px 10px;
+  border-bottom: 1px solid #222;
+  font-size: 0.9rem;
+}
 
+.text-title {
+  font-weight: bold;
+}
+
+.text-venue {
+  opacity: 0.8;
+}
+
+.text-time,
+.text-price {
+  text-align: right;
+}
 
 #cards-view {
   background: none !important;
