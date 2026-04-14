@@ -46,7 +46,8 @@ const DATA_URL = "https://script.googleusercontent.com/macros/echo?user_content_
 const COLOUR_ORDER = ["blue", "green", "orange", "red", "black"];
 document.addEventListener("DOMContentLoaded", () => {
   loadData();
-
+console.log("DOM loaded");
+console.log("button:", document.getElementById("view-toggle"));
   const btn = document.getElementById("view-toggle");
 
   if (!btn) {
