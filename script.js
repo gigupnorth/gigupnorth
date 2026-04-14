@@ -45,7 +45,19 @@ const DATA_URL = "https://script.googleusercontent.com/macros/echo?user_content_
 
 const COLOUR_ORDER = ["blue", "green", "orange", "red", "black"];
 
-document.addEventListener("DOMContentLoaded", loadData);
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("view-toggle").addEventListener("click", () => {
+    if (currentView === "cards") {
+      currentView = "text";
+      renderTextView(cachedEvents);
+      document.getElementById("view-toggle").textContent = "Card View";
+    } else {
+      currentView = "cards";
+      renderEvents(cachedEvents);
+      document.getElementById("view-toggle").textContent = "Text View";
+    }
+  });
+});
 
 async function loadData() {
   try {
